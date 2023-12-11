@@ -19,9 +19,6 @@ find_package(OpenMP REQUIRED)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
-configure_file(${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
-configure_file(${PROJECT_SOURCE_DIR}/test/assets/assets.hpp.in ${PROJECT_BINARY_DIR}/assets.hpp)
-
 include_directories(
 	. 
 )
