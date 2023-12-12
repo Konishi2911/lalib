@@ -1,9 +1,29 @@
 #include "../../include/vec/sized_vec.hpp"
 #include <iterator>
+#include <ranges>
 #include <gtest/gtest.h>
 
 //static_assert(std::random_access_iterator<typename lalib::SizedVec<uint32_t, 3>::Iter>);
 //static_assert(std::random_access_iterator<typename lalib::SizedVec<uint32_t, 3>::ConstIter>);
+
+TEST(SizedVecTests, CopyConstTest) {
+    auto vec = lalib::SizedVec<uint32_t, 3>({0, 1, 2});
+    auto vec_copy = vec;
+
+    ASSERT_EQ(vec_copy[0], vec[0]);
+    ASSERT_EQ(vec_copy[1], vec[1]);
+    ASSERT_EQ(vec_copy[2], vec[2]);
+}
+
+TEST(SizedVecTests, CopyAssignTest) {
+    auto vec = lalib::SizedVec<uint32_t, 3>({0, 1, 2});
+    auto vec_copy = lalib::SizedVec<uint32_t, 3>({2, 1, 0});
+    vec_copy = vec;
+
+    ASSERT_EQ(vec_copy[0], vec[0]);
+    ASSERT_EQ(vec_copy[1], vec[1]);
+    ASSERT_EQ(vec_copy[2], vec[2]);
+}
 
 TEST(SizedVecTests, SizeTest) {
     auto vec = lalib::SizedVec<uint32_t, 3>::filled(0);

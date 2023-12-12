@@ -8,25 +8,28 @@ template<typename T, size_t N>
 struct SizedVec {
 public:
     // === Initializations === //
+
     /// @brief Create a sized vector with given array with copy.
     constexpr SizedVec(const std::array<T, N>& arr) noexcept: 
         _elems(arr) {}
 
-    /// @brief Create a sized vector with given array with move.
-    constexpr SizedVec(std::array<T, N>&& arr) noexcept: 
-        _elems( std::move(arr) ) {}
-
     /// @brief A copy constructor
     constexpr SizedVec(const SizedVec& vec) noexcept = default;
-
-    /// @brief A move constructor
-    constexpr SizedVec(SizedVec&& vec) noexcept = default;
 
     /// Creates a sized vector filled with the given value.
     static constexpr auto filled(T value) noexcept -> SizedVec<T, N>;
 
 
+    // === Assignment === //
+
+    /// @brief Replaces the elements of the vector.
+    /// @param vec the vector to use as data source
+    /// @return a reference of the vector after modified by the operation.
+    constexpr auto operator=(const SizedVec<T, N>& vec) noexcept -> SizedVec<T, N>& = default;
+
+
     // === Inspecting === //
+
     /// Returns the number of elements.
     constexpr auto size() const noexcept -> size_t;
 
