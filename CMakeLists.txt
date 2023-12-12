@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang") 
 	add_compile_options(-Wall -Wextra -Rpass=vec)
-else if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	add_compile_options(-Wall -Wextra)
 else()
 	add_compile_options(-Wall -Wextra)
