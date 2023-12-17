@@ -3,7 +3,7 @@
 
 namespace lalib {
 
-/// Represents a compile-time fixed size vector.
+/// Represents a dynamic-sized vector.
 template<typename T>
 struct DynVec {
 public:
