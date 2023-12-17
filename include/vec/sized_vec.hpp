@@ -16,6 +16,9 @@ public:
     /// @brief A copy constructor
     constexpr SizedVec(const SizedVec& vec) noexcept = default;
 
+    /// @brief Creates a sized vector with uninitialized elements.
+    static constexpr auto uninit() noexcept -> SizedVec<T, N>;
+
     /// Creates a sized vector filled with the given value.
     static constexpr auto filled(T value) noexcept -> SizedVec<T, N>;
 
@@ -34,7 +37,7 @@ public:
     constexpr auto size() const noexcept -> size_t;
 
 
-    // === Indexing and Iterators === //
+    // === Accessing, Indexing, and Iterators === //
     using Iter = std::array<T, N>::iterator;
     using ConstIter = std::array<T, N>::const_iterator;
 
@@ -48,8 +51,13 @@ public:
     constexpr auto operator[](size_t i) const -> const T&;
     constexpr auto operator[](size_t i) -> T&;
 
+    constexpr auto data() noexcept -> T*;
+    constexpr auto data() const noexcept -> const T*;
+
 private:
     std::array<T, N> _elems;
+
+    SizedVec() noexcept = default;
 };
 
 
@@ -63,7 +71,14 @@ constexpr auto generate_std_array_filled_with(T value) -> std::array<T, N> {
 }
 
 template <typename T, size_t N>
-inline constexpr auto SizedVec<T, N>::filled(T value) noexcept -> SizedVec<T, N> {
+inline constexpr auto SizedVec<T, N>::uninit() noexcept -> SizedVec<T, N>
+{
+    return SizedVec<T, N>();
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::filled(T value) noexcept -> SizedVec<T, N>
+{
     return SizedVec(generate_std_array_filled_with<T, N>(value));
 }
 
@@ -119,6 +134,17 @@ inline constexpr auto SizedVec<T, N>::operator[](size_t i) -> T& {
     return this->_elems[i];
 }
 
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::data() noexcept -> T *
+{
+    return this->_elems.data();
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::data() const noexcept -> const T *
+{
+    return this->_elems.data();
+}
 
 // === Specializations of utility templates === //
 
