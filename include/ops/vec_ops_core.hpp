@@ -264,7 +264,7 @@ inline auto scal_core<double>(double alpha, double* v1, size_t size) -> double* 
 template<typename T>
 inline auto __norm2_core_simd(const T* v1, size_t size) -> T {
     auto r = 0;
-    #pragma omp for simd reduction(+:r)
+    #pragma omp simd reduction(+:r)
     for (auto i = 0u; i < size; ++i) {
         r += v1[i] * v1[i];
     }
