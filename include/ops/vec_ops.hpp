@@ -4,6 +4,8 @@
 #include "../err/error.hpp"
 #include "vec_ops_core.hpp"
 
+#include <cstring>
+
 
 namespace lalib {
 
@@ -75,6 +77,66 @@ template<typename T>
 inline auto operator-(const DynVec<T>& v1, const DynVec<T>& v2) -> DynVec<T>;
 
 
+/// @brief 
+/// @tparam T 
+/// @tparam N 
+/// @param alpha 
+/// @param x 
+/// @param y 
+/// @return 
+template<typename T, size_t N>
+inline auto axpy(T alpha, const SizedVec<T, N>& x, SizedVec<T, N>& y) noexcept -> SizedVec<T, N>&;
+
+template<typename T>
+inline auto axpy(T alpha, const DynVec<T>& x, DynVec<T>& y) noexcept -> DynVec<T>&;
+
+
+/// @brief      Calculate scalar multipliation of vectors
+/// @details    The given vector will be overwritten through this operation.
+/// @tparam T 
+/// @tparam N 
+/// @param alpha 
+/// @param x 
+/// @return 
+template<typename T, size_t N>
+inline auto scale(T alpha, SizedVec<T, N>& x) noexcept -> SizedVec<T, N>&;
+
+template<typename T>
+inline auto scale(T alpha, DynVec<T>& x) noexcept -> DynVec<T>&;
+
+/// @brief      Calculate scalar multipliation of vectors
+/// @details    The result is stored in newly created instance.
+/// @tparam T 
+/// @tparam N 
+/// @param alpha 
+/// @param x 
+/// @return 
+template<typename T, size_t N>
+inline auto scaled(T alpha, const SizedVec<T, N>& x) noexcept -> SizedVec<T, N>;
+
+template<typename T>
+inline auto scaled(T alpha, const DynVec<T>& x) noexcept -> DynVec<T>;
+
+
+template<typename T, size_t N>
+inline auto operator*(T alpha, const SizedVec<T, N>& x) noexcept -> SizedVec<T, N>;
+
+template<typename T>
+inline auto operator*(T alpha, const DynVec<T>& x) noexcept -> DynVec<T>;
+
+
+/// @brief 
+/// @tparam T 
+/// @tparam N 
+/// @param x 
+/// @param y 
+/// @return 
+template<typename T, size_t N>
+inline auto dot(const SizedVec<T, N>& x, SizedVec<T, N>& y) noexcept -> T;
+
+template<typename T>
+inline auto dot(const DynVec<T>& x, DynVec<T>& y) noexcept -> T;
+
 
 // ### Implementations ### //
 
@@ -84,10 +146,12 @@ inline void __check_size(size_t n1, size_t n2) {
     }
 }
 
-// ### Addition ### //
+
+// === Addition ============================================================== //
+
 template<typename T, size_t N>
 inline auto add(const SizedVec<T, N>& v1, const SizedVec<T, N>& v2, SizedVec<T, N>& vr) noexcept -> SizedVec<T, N>& {
-    add_core_sized<T, N>(v1.data(), v2.data(), vr.data());
+    add_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }
 
@@ -95,7 +159,7 @@ template <typename T, size_t N>
 auto add(const SizedVec<T, N> &v1, const DynVec<T> &v2, SizedVec<T, N> &vr) -> SizedVec<T, N> &
 {
     __check_size(v1.size(), v2.size());
-    add_core_sized<T, N>(v1.data(), v2.data(), vr.data());
+    add_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }
 
@@ -103,7 +167,7 @@ template <typename T, size_t N>
 auto add(const DynVec<T> &v1, const SizedVec<T, N> &v2, SizedVec<T, N> &vr) -> SizedVec<T, N> &
 {
     __check_size(v1.size(), v2.size());
-    add_core_sized<T, N>(v1.data(), v2.data(), vr.data());
+    add_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }
 
@@ -130,10 +194,11 @@ auto operator+(const DynVec<T> &v1, const DynVec<T> &v2) -> DynVec<T>
     return vr;
 }
 
-// ### Subtraction ###
+// === Subtraction ============================================================== //
+
 template<typename T, size_t N>
 inline auto sub(const SizedVec<T, N>& v1, const SizedVec<T, N>& v2, SizedVec<T, N>& vr) noexcept -> SizedVec<T, N>& {
-    sub_core_sized<T, N>(v1.data(), v2.data(), vr.data());
+    sub_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }
 
@@ -141,15 +206,15 @@ template <typename T, size_t N>
 auto sub(const SizedVec<T, N> &v1, const DynVec<T> &v2, SizedVec<T, N> &vr) -> SizedVec<T, N> &
 {
     __check_size(v1.size(), v2.size());
-    sub_core_sized<T, N>(v1.data(), v2.data(), vr.data());
-    return vr;
+    sub_core(v1.data(), v2.data(), vr.data(), N);
+    return v1;
 }
 
 template <typename T, size_t N>
 auto sub(const DynVec<T> &v1, const SizedVec<T, N> &v2, SizedVec<T, N> &vr) -> SizedVec<T, N> &
 {
     __check_size(v1.size(), v2.size());
-    sub_core_sized<T, N>(v1.data(), v2.data(), vr.data());
+    sub_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }
 
@@ -175,4 +240,81 @@ auto operator-(const DynVec<T> &v1, const DynVec<T> &v2) -> DynVec<T>
     sub(v1, v2, vr);
     return vr;
 }
+
+
+// === AXPY ============================================================== //
+
+template <typename T, size_t N>
+auto axpy(T alpha, const SizedVec<T, N> &x, SizedVec<T, N> &y) noexcept -> SizedVec<T, N> &
+{
+    axpy_core(alpha, x.data(), y.data(), N);
+    return y;
+}
+template <typename T>
+auto axpy(T alpha, const DynVec<T> &x, DynVec<T> &y) noexcept -> DynVec<T> &
+{
+    __check_size(x.size(), y.size());
+    axpy_core(alpha, x.data(), y.data(), x.size());
+    return y;
+}
+
+
+// === SCALE ============================================================== //
+
+
+template<typename T, size_t N>
+auto scale(T alpha, SizedVec<T, N>& x) noexcept -> SizedVec<T, N>& {
+    scal_core(alpha, x.data(), x.size());
+    return x;
+}
+template<typename T>
+auto scale(T alpha, DynVec<T>& x) noexcept -> DynVec<T>& {
+    scal_core(alpha, x.data(), x.size());
+    return x;
+}
+
+
+template<typename T, size_t N>
+auto scaled(T alpha, const SizedVec<T, N>& x) noexcept -> SizedVec<T, N> {
+    return alpha * x;
+}
+template<typename T>
+auto scaled(T alpha, const DynVec<T>& x) noexcept -> DynVec<T> {
+    return alpha * x;
+}
+
+
+template<typename T, size_t N>
+auto operator*(T alpha, const SizedVec<T, N>& x) noexcept -> SizedVec<T, N> {
+    auto r = SizedVec<T, N>::uninit();
+    std::memcpy(r.data(), x.data(), x.size());
+    scal_core(alpha, r.data(), r.size());
+    return r;
+}
+
+template<typename T>
+auto operator*(T alpha, const DynVec<T>& x) noexcept -> DynVec<T> {
+    auto r = DynVec<T>::uninit();
+    std::memcpy(r.data(), x.data(), x.size());
+    scal_core(alpha, r.data(), r.size());
+    return r;
+}
+
+
+// === DOT ============================================================== //
+
+template<typename T, size_t N>
+auto dot(const SizedVec<T, N>& x, const SizedVec<T, N>& y) noexcept -> T {
+    T d;
+    d = dot_core(x.data(), y.data(), x.size());
+    return d;
+}
+template<typename T>
+auto dot(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T {
+    T d;
+    __check_size(x.size(), y.size());
+    d = dot_core(x.data(), y.data(), x.size());
+    return d;
+}
+
 }

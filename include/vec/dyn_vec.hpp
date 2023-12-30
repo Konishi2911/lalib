@@ -1,7 +1,12 @@
 #pragma once
 #include <vector>
+#include "../ops/vec_ops_core.hpp"
+#include "../err/error.hpp"
 
 namespace lalib {
+
+// Declare symbols
+template<typename T, size_t N> struct SizedVec;
 
 /// Represents a dynamic-sized vector.
 template<typename T>
@@ -67,8 +72,15 @@ public:
     constexpr auto data() noexcept -> T*;
     constexpr auto data() const noexcept -> const T*;
 
+
+    // === Operations === //
+    template<size_t N> constexpr auto dot(const SizedVec<T, N>& v) const -> T;
+    constexpr auto dot(const DynVec<T>& v) const -> T;
+
 private:
     std::vector<T> _elems;
+
+    void __check_size(size_t, size_t) const;
 };
 
 template <typename T>
@@ -147,6 +159,35 @@ inline constexpr auto DynVec<T>::data() const noexcept -> const T *
     return this->_elems.data();
 }
 
+
+template <typename T>
+inline constexpr auto DynVec<T>::dot(const DynVec<T> &v) const -> T
+{
+    T d;
+    this->__check_size(this->size(), v.size());
+    d = dot_core(this->data(), v.data(), this->size());
+    return d;
+}
+
 // === Specializations of utility templates === //
+
+template <typename T>
+template <size_t N>
+inline constexpr auto DynVec<T>::dot(const SizedVec<T, N> &v) const -> T
+{
+    T d;
+    this->__check_size(this->size(), v.size());
+    d = dot_core(this->data(), v.data(), this->size());
+    return d;
+}
+
+
+template<typename T>
+inline void DynVec<T>::__check_size(size_t n1, size_t n2) const {
+    if (n1 != n2) {
+        throw vec_error::SizeMismatched(n1, n2);
+    }
+}
+
 
 }

@@ -1,7 +1,11 @@
 #pragma once
 #include <array>
+#include "../ops/vec_ops_core.hpp"
 
 namespace lalib {
+
+// Declare symbols
+template<typename T> struct DynVec;
 
 /// Represents a compile-time fixed size vector.
 template<typename T, size_t N>
@@ -53,6 +57,10 @@ public:
 
     constexpr auto data() noexcept -> T*;
     constexpr auto data() const noexcept -> const T*;
+
+    // === Operations === //
+    constexpr auto dot(const SizedVec<T, N>& v) const noexcept -> T;
+    constexpr auto dot(const DynVec<T>& v) const noexcept -> T;
 
 private:
     std::array<T, N> _elems;
@@ -144,6 +152,22 @@ template <typename T, size_t N>
 inline constexpr auto SizedVec<T, N>::data() const noexcept -> const T *
 {
     return this->_elems.data();
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::dot(const SizedVec<T, N> &v) const noexcept -> T
+{
+    T d;
+    d = dot_core(this->data(), v.data(), this->size());
+    return d;
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::dot(const DynVec<T> &v) const noexcept -> T
+{
+    T d;
+    d = dot_core(this->data(), v.data(), this->size());
+    return d;
 }
 
 // === Specializations of utility templates === //

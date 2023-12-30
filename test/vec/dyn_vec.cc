@@ -65,3 +65,21 @@ TEST(DynVecTests, FilledTest) {
     ASSERT_EQ(1, vec4[2]);
     ASSERT_EQ(1, vec4[3]);
 }
+
+TEST(DynVecTests, DotTest) {
+    auto v1 = lalib::DynVec<double>::filled(4, 1);
+    auto v2 = lalib::DynVec<double> ({ 1.0, 2.0, 3.0, 4.0 });
+
+    ASSERT_DOUBLE_EQ(10.0, v1.dot(v2));
+}
+
+TEST(DynVecTests, DotTestSizeMismatched) {
+    auto v1 = lalib::DynVec<double>::filled(3, 1);
+    auto v2 = lalib::DynVec<double> ({ 1.0, 2.0, 3.0, 4.0 });
+    ASSERT_THROW(
+        {
+            v1.dot(v2); 
+        }, 
+        vec_error::SizeMismatched
+    );
+}
