@@ -1,6 +1,7 @@
 #include "../../include/vec/dyn_vec.hpp"
 #include <iterator>
 #include <ranges>
+#include <algorithm>
 #include <gtest/gtest.h>
 
 //static_assert(std::random_access_iterator<typename lalib::SizedVec<uint32_t, 3>::Iter>);
