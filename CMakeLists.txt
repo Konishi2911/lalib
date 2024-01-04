@@ -8,19 +8,34 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang") 
 	add_compile_options(-Wall -Wextra -Rpass=vec)
-else if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	add_compile_options(-Wall -Wextra)
 else()
 	add_compile_options(-Wall -Wextra)
 endif()
-	
+
 
 find_package(OpenMP REQUIRED)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
-configure_file(${PROJECT_SOURCE_DIR}/include/version.hpp.in ${PROJECT_BINARY_DIR}/version.hpp)
-configure_file(${PROJECT_SOURCE_DIR}/test/assets/assets.hpp.in ${PROJECT_BINARY_DIR}/assets.hpp)
+
+option(LALIB_BACKEND "Backend" "Internal")
+if (LALIB_BACKEND MATCHES "Internal")
+	add_compile_definitions(LALIB_INTERNAL_BACKEND)
+elseif (LALIB_BACKEND MATCHES "BLAS")
+	find_package(BLAS REQUIRED)
+	add_compile_definitions(LALIB_BLAS_BACKEND)
+endif()
+
+option(LALIB_USE_ACCELERATOR "Accelerator" "FALSE")
+if (LALIB_USE_ACCELERATOR)
+	if (${OpenMP_CXX_VERSION} VERSION_LESS 4.5)
+		message(FATAL_ERROR "OpenMP version 4.5 is required to enable hardware acceleration.")
+	endif()
+	add_compile_definitions(LALIB_USE_ACCELERATOR)
+endif()
+
 
 include_directories(
 	. 
@@ -31,3 +46,5 @@ if (${GTest_FOUND})
 	enable_testing()
 	add_subdirectory(test)
 endif()
+
+add_subdirectory(benchmark)
