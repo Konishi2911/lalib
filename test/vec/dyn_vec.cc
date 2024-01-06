@@ -84,3 +84,9 @@ TEST(DynVecTests, DotTestSizeMismatched) {
         vec_error::SizeMismatched
     );
 }
+
+TEST(DynVecTests, Norm2Test) {
+    auto v = lalib::DynVec<double> ({ 1.0, 2.0, 3.0, 4.0 });
+
+    ASSERT_DOUBLE_EQ(std::sqrt(30.0), v.norm2());
+}
