@@ -49,3 +49,9 @@ TEST(SizedVecTets, DotTest) {
 
     ASSERT_DOUBLE_EQ(10.0, v1.dot(v2));
 }
+
+TEST(SizedVecTets, Norm2Test) {
+    auto v = lalib::SizedVec<double, 4> ({ 1.0, 2.0, 3.0, 4.0 });
+
+    ASSERT_DOUBLE_EQ(std::sqrt(30), v.norm2());
+}
