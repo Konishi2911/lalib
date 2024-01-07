@@ -3,6 +3,7 @@
 #include "../vec/dyn_vec.hpp"
 #include "../err/error.hpp"
 #include "vec_ops_core.hpp"
+#include "ops_traits.hpp"
 
 #include <cstring>
 
@@ -295,6 +296,34 @@ template<typename T>
 auto operator*(T alpha, const DynVec<T>& x) noexcept -> DynVec<T> {
     auto r = x;
     scal_core(alpha, r.data(), r.size());
+    return r;
+}
+
+template<typename T, size_t N>
+auto operator*(const SizedVec<T, N>& x, T alpha) noexcept -> SizedVec<T, N> {
+    auto r = x;
+    scal_core(alpha, r.data(), r.size());
+    return r;
+}
+
+template<typename T>
+auto operator*(const DynVec<T>& x, T alpha) noexcept -> DynVec<T> {
+    auto r = x;
+    scal_core(alpha, r.data(), r.size());
+    return r;
+}
+
+template<typename T, size_t N>
+auto operator/(const SizedVec<T, N>& x, T alpha) noexcept -> SizedVec<T, N> {
+    auto r = x;
+    scal_core(reciprocal(alpha), r.data(), r.size());
+    return r;
+}
+
+template<typename T>
+auto operator/(const DynVec<T>& x, T alpha) noexcept -> DynVec<T> {
+    auto r = x;
+    scal_core(reciprocal(alpha), r.data(), r.size());
     return r;
 }
 
