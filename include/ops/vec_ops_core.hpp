@@ -263,7 +263,7 @@ inline auto scal_core<double>(double alpha, double* v1, size_t size) -> double* 
 
 template<typename T>
 inline auto __norm2_core_simd(const T* v1, size_t size) -> T {
-    auto r = 0;
+    T r = 0;
     #pragma omp simd reduction(+:r)
     for (auto i = 0u; i < size; ++i) {
         r += v1[i] * v1[i];
@@ -279,7 +279,7 @@ inline auto norm2_core(const T* v1, size_t size) -> T {
 
 template<>
 inline auto norm2_core<float>(const float* v1, size_t size) -> float {
-    auto norm = 0;
+    float norm = 0;
     #if defined(LALIB_BLAS_BACKEND)    
     norm = cblas_snrm2(size, v1, 1);
     #else 
@@ -290,7 +290,7 @@ inline auto norm2_core<float>(const float* v1, size_t size) -> float {
 
 template<>
 inline auto norm2_core<double>(const double* v1, size_t size) -> double {
-    auto norm = 0;
+    double norm = 0;
     #if defined(LALIB_BLAS_BACKEND)    
     norm = cblas_dnrm2(size, v1, 1);
     #else 

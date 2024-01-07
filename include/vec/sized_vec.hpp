@@ -62,6 +62,8 @@ public:
     constexpr auto dot(const SizedVec<T, N>& v) const noexcept -> T;
     constexpr auto dot(const DynVec<T>& v) const noexcept -> T;
 
+    constexpr auto norm2() const noexcept -> T;
+
 private:
     std::array<T, N> _elems;
 
@@ -168,6 +170,14 @@ inline constexpr auto SizedVec<T, N>::dot(const DynVec<T> &v) const noexcept -> 
     T d;
     d = dot_core(this->data(), v.data(), this->size());
     return d;
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedVec<T, N>::norm2() const noexcept -> T
+{
+    T norm;
+    norm = norm2_core(this->data(), this->size());
+    return norm;
 }
 
 // === Specializations of utility templates === //
