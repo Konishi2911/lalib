@@ -134,10 +134,26 @@ TEST(VecOpsTests, SizedVecScalarScaleOpTest) {
     auto v1 = lalib::SizedVec<double, 3>({1.0, 2.0, 3.0});
 
     auto vr = alpha * v1;
+    auto vr1 = v1 * alpha;
 
     ASSERT_DOUBLE_EQ(2.0, vr[0]);
     ASSERT_DOUBLE_EQ(4.0, vr[1]);
     ASSERT_DOUBLE_EQ(6.0, vr[2]);
+
+    ASSERT_DOUBLE_EQ(2.0, vr1[0]);
+    ASSERT_DOUBLE_EQ(4.0, vr1[1]);
+    ASSERT_DOUBLE_EQ(6.0, vr1[2]);
+}
+
+TEST(VecOpsTests, SizedVecScalarDivOpTest) {
+    double alpha = 2.0;
+    auto v1 = lalib::SizedVec<double, 3>({1.0, 2.0, 3.0});
+
+    auto vr = v1 / alpha;
+
+    ASSERT_DOUBLE_EQ(0.5, vr[0]);
+    ASSERT_DOUBLE_EQ(1.0, vr[1]);
+    ASSERT_DOUBLE_EQ(1.5, vr[2]);
 }
 
 TEST(VecOpsTests, DynVecAxpyTest) {
@@ -175,10 +191,30 @@ TEST(VecOpsTests, DynVecScalarScaleOpTest) {
     auto v1 = lalib::DynVec<double>({1.0, 2.0, 3.0, 2.0, 4.0});
 
     auto vr = alpha * v1;
+    auto vr1 = v1 * alpha;
 
     ASSERT_DOUBLE_EQ(3.0, vr[0]);
     ASSERT_DOUBLE_EQ(6.0, vr[1]);
     ASSERT_DOUBLE_EQ(9.0, vr[2]);
     ASSERT_DOUBLE_EQ(6.0, vr[3]);
     ASSERT_DOUBLE_EQ(12.0, vr[4]);
+
+    ASSERT_DOUBLE_EQ(3.0, vr1[0]);
+    ASSERT_DOUBLE_EQ(6.0, vr1[1]);
+    ASSERT_DOUBLE_EQ(9.0, vr1[2]);
+    ASSERT_DOUBLE_EQ(6.0, vr1[3]);
+    ASSERT_DOUBLE_EQ(12.0, vr1[4]);
+}
+
+TEST(VecOpsTests, DynVecScalarDivOpTest) {
+    double alpha = 3.0;
+    auto v1 = lalib::DynVec<double>({1.0, 2.0, 3.0, 2.0, 4.0});
+
+    auto vr = v1 / alpha;
+
+    ASSERT_DOUBLE_EQ(1.0 / 3.0, vr[0]);
+    ASSERT_DOUBLE_EQ(2.0 / 3.0, vr[1]);
+    ASSERT_DOUBLE_EQ(1.0, vr[2]);
+    ASSERT_DOUBLE_EQ(2.0 / 3.0, vr[3]);
+    ASSERT_DOUBLE_EQ(4.0 / 3.0, vr[4]);
 }
