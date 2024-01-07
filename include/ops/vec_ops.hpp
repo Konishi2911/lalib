@@ -286,16 +286,14 @@ auto scaled(T alpha, const DynVec<T>& x) noexcept -> DynVec<T> {
 
 template<typename T, size_t N>
 auto operator*(T alpha, const SizedVec<T, N>& x) noexcept -> SizedVec<T, N> {
-    auto r = SizedVec<T, N>::uninit();
-    std::memcpy(r.data(), x.data(), x.size());
+    auto r = x;
     scal_core(alpha, r.data(), r.size());
     return r;
 }
 
 template<typename T>
 auto operator*(T alpha, const DynVec<T>& x) noexcept -> DynVec<T> {
-    auto r = DynVec<T>::uninit();
-    std::memcpy(r.data(), x.data(), x.size());
+    auto r = x;
     scal_core(alpha, r.data(), r.size());
     return r;
 }

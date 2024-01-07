@@ -129,6 +129,17 @@ TEST(VecOpsTests, SizedVecScalarScaleTest) {
     ASSERT_DOUBLE_EQ(6.0, v1[2]);
 }
 
+TEST(VecOpsTests, SizedVecScalarScaleOpTest) {
+    double alpha = 2.0;
+    auto v1 = lalib::SizedVec<double, 3>({1.0, 2.0, 3.0});
+
+    auto vr = alpha * v1;
+
+    ASSERT_DOUBLE_EQ(2.0, vr[0]);
+    ASSERT_DOUBLE_EQ(4.0, vr[1]);
+    ASSERT_DOUBLE_EQ(6.0, vr[2]);
+}
+
 TEST(VecOpsTests, DynVecAxpyTest) {
     double alpha = 2.0;
     auto v1 = lalib::DynVec<double>({1.0, 2.0, 3.0, 2.0, 4.0});
@@ -157,4 +168,17 @@ TEST(VecOpsTests, DynVecScalarScaleTest) {
     ASSERT_DOUBLE_EQ(9.0, v1[2]);
     ASSERT_DOUBLE_EQ(6.0, v1[3]);
     ASSERT_DOUBLE_EQ(12.0, v1[4]);
+}
+
+TEST(VecOpsTests, DynVecScalarScaleOpTest) {
+    double alpha = 3.0;
+    auto v1 = lalib::DynVec<double>({1.0, 2.0, 3.0, 2.0, 4.0});
+
+    auto vr = alpha * v1;
+
+    ASSERT_DOUBLE_EQ(3.0, vr[0]);
+    ASSERT_DOUBLE_EQ(6.0, vr[1]);
+    ASSERT_DOUBLE_EQ(9.0, vr[2]);
+    ASSERT_DOUBLE_EQ(6.0, vr[3]);
+    ASSERT_DOUBLE_EQ(12.0, vr[4]);
 }
