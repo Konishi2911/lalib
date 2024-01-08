@@ -23,6 +23,11 @@ add_executable(vec_ops_test ops/vec_ops.cc)
 target_link_libraries(vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(vec_ops_test)
 
+## Matrix-Vector Operations
+add_executable(mat_vec_ops_test ops/mat_vec_ops.cc)
+target_link_libraries(mat_vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(mat_vec_ops_test)
+
 
 ## Errors
 add_executable(error_test err/error.cc)

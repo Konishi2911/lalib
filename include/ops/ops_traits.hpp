@@ -4,6 +4,20 @@
 
 namespace lalib {
 
+// === Zero === //
+
+template<typename T>
+requires std::floating_point<T>
+struct Zero {
+    static auto value() noexcept -> T { return 0.0; }
+};
+
+template<typename T>
+requires std::floating_point<T>
+struct Zero<std::complex<T>> {
+    static auto value() noexcept -> T { return std::complex<T>(0.0, 0.0); }
+};
+
 // === One === //
 
 template<typename T>
