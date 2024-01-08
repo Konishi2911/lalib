@@ -1,4 +1,5 @@
 #pragma once
+#include "../ops/ops_traits.hpp"
 #include <vector>
 
 namespace lalib {
@@ -78,7 +79,7 @@ private:
 template <typename T>
 inline constexpr auto DynMat<T>::uninit(size_t n, size_t m) noexcept -> DynMat<T>
 {
-    return DynMat<T>(std::vector<T>(n * m));
+    return DynMat<T>(std::vector<T>(n * m), n, m);
 }
 
 template <typename T>
@@ -86,7 +87,7 @@ inline constexpr auto DynMat<T>::filled(T value, size_t n, size_t m) noexcept ->
 {
     auto mat = DynMat<T>::uninit(n, m);
     for (auto i = 0u; i < n; ++i) {
-        for (auto j = 0u; i < m; ++j) {
+        for (auto j = 0u; j < m; ++j) {
             mat(i, j) = value;
         }
     }
@@ -125,14 +126,16 @@ inline constexpr auto DynMat<T>::identity(size_t n) noexcept -> DynMat<T>
 template <typename T>
 inline constexpr auto DynMat<T>::operator()(size_t i, size_t j) const -> const T &
 {
-    auto v = this->_elems[i * M + j];
+    auto m = this->_shape.second;
+    auto& v = this->_elems[i * m + j];
     return v;
 }
 
 template <typename T>
 inline constexpr auto DynMat<T>::operator()(size_t i, size_t j) -> T &
 {
-    auto v = this->_elems[i * M + j];
+    auto m = this->_shape.second;
+    auto& v = this->_elems[i * m + j];
     return v;
 }
 

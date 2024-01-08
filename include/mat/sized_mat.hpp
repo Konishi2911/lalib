@@ -44,7 +44,7 @@ public:
     /// @brief Replaces the elements of the vector.
     /// @param mat the matrix to use as data source
     /// @return a reference of the matrix after modified by the operation.
-    constexpr auto operator=(const SizedMat<T, N, M>& mat) noexcept -> SizedMat<T, N>& = default;
+    constexpr auto operator=(const SizedMat<T, N, M>& mat) noexcept -> SizedMat<T, N, M>& = default;
 
 
     // === Inspecting === //
@@ -90,7 +90,7 @@ inline constexpr auto SizedMat<T, N, M>::filled(T value) noexcept -> SizedMat<T,
 {
     auto mat = SizedMat<T, N, M>::uninit();
     for (auto i = 0u; i < N; ++i) {
-        for (auto j = 0u; i < M; ++j) {
+        for (auto j = 0u; j < M; ++j) {
             mat(i, j) = value;
         }
     }
@@ -130,14 +130,14 @@ inline constexpr auto SizedMat<T, N, M>::identity() noexcept -> SizedMat<T, N, M
 template <typename T, size_t N, size_t M>
 inline constexpr auto SizedMat<T, N, M>::operator()(size_t i, size_t j) const -> const T &
 {
-    auto v = this->_elems[i * M + j];
+    auto& v = this->_elems[i * M + j];
     return v;
 }
 
 template <typename T, size_t N, size_t M>
 inline constexpr auto SizedMat<T, N, M>::operator()(size_t i, size_t j) -> T &
 {
-    auto v = this->_elems[i * M + j];
+    auto& v = this->_elems[i * M + j];
     return v;
 }
 template <typename T, size_t N, size_t M>
