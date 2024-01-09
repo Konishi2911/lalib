@@ -13,6 +13,8 @@ template<typename T, size_t N> struct SizedVec;
 template<typename T>
 struct DynVec {
 public:
+    using ElemType = T;
+
     // === Initializations === //
 
     /// @brief Create a sized vector with given array with copy.

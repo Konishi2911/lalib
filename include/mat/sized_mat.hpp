@@ -2,6 +2,7 @@
 #include <array>
 #include <utility>
 #include "../ops/ops_traits.hpp"
+#include "../type_traits.hpp"
 
 namespace lalib {
 
@@ -187,5 +188,106 @@ template <typename T, size_t N, size_t M>
 inline constexpr auto SizedMat<T, N, M>::cend() const noexcept -> ConstIter
 {
     return this->_elems.cend();
+}
+
+
+/*  ############################  *
+    Sized Tri-diagonal Matrix
+ *  ############################  */   
+
+template<typename T, size_t N>
+struct SizedTriDiagMat {
+public:
+    using ElemType = T;
+
+    SizedTriDiagMat(const std::array<T, N - 1>& dl, const std::array<T, N>& d, const std::array<T, N - 1>& du) noexcept;
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    /// @return 
+    constexpr auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    /// @brief Returns a pointer to the array of the sub-diagonal elements.
+    /// @return 
+    auto data_dl() const noexcept -> const T*;
+    auto data_dl() noexcept -> T*;
+
+    /// @brief Returns a pointer to the array of the diagonal elements.
+    /// @return 
+    auto data_d() const noexcept -> const T*;
+    auto data_d() noexcept -> T*;
+
+    /// @brief Returns a pointer to the array of the super-diagonal elements.
+    /// @return 
+    auto data_du() const noexcept -> const T*;
+    auto data_du() noexcept -> T*;
+
+private:    
+    std::array<T, N - 1>    _dl;
+    std::array<T, N>        _d;
+    std::array<T, N - 1>    _du;
+};
+
+template <typename T, size_t N>
+inline SizedTriDiagMat<T, N>::SizedTriDiagMat(const std::array<T, N - 1> &dl, const std::array<T, N> &d, const std::array<T, N - 1> &du) noexcept:
+    _dl(dl), _d(d), _du(du)
+{ }
+
+template <typename T, size_t N>
+inline constexpr auto SizedTriDiagMat<T, N>::shape() const noexcept -> std::pair<size_t, size_t>
+{
+    return std::pair<size_t, size_t>(N, N);
+}
+
+template <typename T, size_t N>
+inline constexpr auto SizedTriDiagMat<T, N>::operator()(size_t i, size_t j) const -> const T &
+{
+    if (i == j)             return this->_d[i];
+    else if ( i == j - 1 )  return this->_du[i];
+    else if ( i == j + 1 )  return this->_dl[i - 1];
+    else                    return Zero<T>::value();
+}
+template <typename T, size_t N>
+inline constexpr auto SizedTriDiagMat<T, N>::operator()(size_t i, size_t j) -> T &
+{
+    if (i == j)             return this->_d[i];
+    else if ( i == j - 1 )  return this->_du[i];
+    else if ( i == j + 1 )  return this->_dl[i - 1];
+    else                    return Zero<T>::value();
+}
+
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_dl() const noexcept -> const T *
+{
+    return this->_dl.data();
+}
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_dl() noexcept -> T *
+{
+    return this->_dl.data();
+}
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_d() const noexcept -> const T *
+{
+    return this->_d.data();
+}
+
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_d() noexcept -> T *
+{
+    return this->_d.data();
+}
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_du() const noexcept -> const T *
+{
+    return this->_du.data();
+}
+
+template <typename T, size_t N>
+inline auto SizedTriDiagMat<T, N>::data_du() noexcept -> T *
+{
+    return this->_du.data();
 }
 }

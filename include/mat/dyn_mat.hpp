@@ -188,4 +188,112 @@ inline constexpr auto DynMat<T>::cend() const noexcept -> ConstIter
     return this->_elems.cend();
 }
 
+
+
+/*  ############################  *
+    Dynamic Tri-diagonal Matrix
+ *  ############################  */   
+
+template<typename T>
+struct DynTriDiagMat {
+public:
+    using ElemType = T;
+
+    DynTriDiagMat(const std::vector<T>& dl, const std::vector<T>& d, const std::vector<T>& du) noexcept;
+    DynTriDiagMat(std::vector<T>&& dl, std::vector<T>&& d, std::vector<T>&& du) noexcept;
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    /// @return 
+    auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    /// @brief Returns a pointer to the array of the sub-diagonal elements.
+    /// @return 
+    auto data_dl() const noexcept -> const T*;
+    auto data_dl() noexcept -> T*;
+
+    /// @brief Returns a pointer to the array of the diagonal elements.
+    /// @return 
+    auto data_d() const noexcept -> const T*;
+    auto data_d() noexcept -> T*;
+
+    /// @brief Returns a pointer to the array of the super-diagonal elements.
+    /// @return 
+    auto data_du() const noexcept -> const T*;
+    auto data_du() noexcept -> T*;
+
+private:    
+    std::vector<T> _dl;
+    std::vector<T> _d;
+    std::vector<T> _du;
+};
+
+template <typename T>
+inline DynTriDiagMat<T>::DynTriDiagMat(const std::vector<T> &dl, const std::vector<T> &d, const std::vector<T> &du) noexcept:
+    _dl(dl), _d(d), _du(du)
+{ }
+
+template <typename T>
+inline DynTriDiagMat<T>::DynTriDiagMat(std::vector<T> &&dl, std::vector<T> &&d, std::vector<T> &&du) noexcept:
+    _dl(std::move(dl)), _d(std::move(d)), _du(std::move(du))
+{ }
+
+template <typename T>
+inline auto DynTriDiagMat<T>::shape() const noexcept -> std::pair<size_t, size_t>
+{
+    auto n = this->_d.size();
+    return std::pair<size_t, size_t>(n, n);
+}
+
+template <typename T>
+inline constexpr auto DynTriDiagMat<T>::operator()(size_t i, size_t j) const -> const T &
+{
+    if (i == j)             return this->_d[i];
+    else if ( i == j - 1 )  return this->_du[i];
+    else if ( i == j + 1 )  return this->_dl[i - 1];
+    else                    return Zero<T>::value();
+}
+template <typename T>
+inline constexpr auto DynTriDiagMat<T>::operator()(size_t i, size_t j) -> T &
+{
+    if (i == j)             return this->_d[i];
+    else if ( i == j - 1 )  return this->_du[i];
+    else if ( i == j + 1 )  return this->_dl[i - 1];
+    else                    return Zero<T>::value();
+}
+
+template <typename T>
+inline auto DynTriDiagMat<T>::data_dl() const noexcept -> const T *
+{
+    return this->_dl.data();
+}
+template <typename T>
+inline auto DynTriDiagMat<T>::data_dl() noexcept -> T *
+{
+    return this->_dl.data();
+}
+template <typename T>
+inline auto DynTriDiagMat<T>::data_d() const noexcept -> const T *
+{
+    return this->_d.data();
+}
+
+template <typename T>
+inline auto DynTriDiagMat<T>::data_d() noexcept -> T *
+{
+    return this->_d.data();
+}
+template <typename T>
+inline auto DynTriDiagMat<T>::data_du() const noexcept -> const T *
+{
+    return this->_du.data();
+}
+
+template <typename T>
+inline auto DynTriDiagMat<T>::data_du() noexcept -> T *
+{
+    return this->_du.data();
+}
 }

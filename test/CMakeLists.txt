@@ -29,6 +29,12 @@ target_link_libraries(mat_vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LI
 gtest_discover_tests(mat_vec_ops_test)
 
 
+## Solvers
+add_executable(tri_diag_test solver/tri_diag.cc)
+target_link_libraries(tri_diag_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(tri_diag_test)
+
+
 ## Errors
 add_executable(error_test err/error.cc)
 target_link_libraries(error_test PRIVATE GTest::GTest GTest::Main)
