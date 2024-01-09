@@ -2,11 +2,15 @@
 #include "../mat.hpp"
 #include "../vec.hpp"
 #include "../type_traits.hpp"
-#include "internal/tdma.hpp"
-#include "lapack/gtsv.hpp"
 #include <concepts>
 #include <vector>
 #include <utility>
+
+#if defined(LALIB_LAPACK_BACKEND)
+#include "lapack/gtsv.hpp"
+#else 
+#include "internal/tdma.hpp"
+#endif
 
 namespace lalib::solver {
 
