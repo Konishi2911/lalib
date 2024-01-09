@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(lalib VERSION 0.1.2 LANGUAGES C CXX)
+project(lalib VERSION 0.2.2 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -26,6 +26,9 @@ if (LALIB_BACKEND MATCHES "Internal")
 elseif (LALIB_BACKEND MATCHES "BLAS")
 	find_package(BLAS REQUIRED)
 	add_compile_definitions(LALIB_BLAS_BACKEND)
+elseif (LALIB_BACKEND MATCHES "LAPACK")
+	find_package(LAPACK REQUIRED)
+	add_compile_definitions(LALIB_BLAS_BACKEND LALIB_LAPACK_BACKEND)
 endif()
 
 option(LALIB_USE_ACCELERATOR "Accelerator" "FALSE")

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "../ops/ops_traits.hpp"
 #include "../ops/vec_ops_core.hpp"
 #include "../err/error.hpp"
 
@@ -12,6 +13,8 @@ template<typename T, size_t N> struct SizedVec;
 template<typename T>
 struct DynVec {
 public:
+    using ElemType = T;
+
     // === Initializations === //
 
     /// @brief Create a sized vector with given array with copy.
@@ -27,6 +30,9 @@ public:
 
     /// @brief A move constructor
     constexpr DynVec(DynVec<T>&& vec) noexcept = default;
+
+    /// @brief Destructor
+    ~DynVec() noexcept = default;
 
     /// @brief Creates a sized vector with uninitialized elements.
     /// @param n    the number of elements
