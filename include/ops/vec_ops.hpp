@@ -10,6 +10,26 @@
 
 namespace lalib {
 
+/// @brief      Functions to perform negetion of each element.
+/// @tparam T 
+/// @tparam N 
+/// @param v 
+/// @param vr 
+/// @return 
+template<typename T, size_t N>
+inline auto neg(const SizedVec<T, N>& v, SizedVec<T, N>& vr) noexcept -> SizedVec<T, N>&;
+
+template<typename T>
+inline auto neg(const DynVec<T>& v, DynVec<T>& vr) noexcept -> DynVec<T>&;
+
+
+template<typename T, size_t N>
+inline auto operator-(const SizedVec<T, N>& v) noexcept -> SizedVec<T, N>;
+
+template<typename T>
+inline auto operator-(const DynVec<T>& v) noexcept -> DynVec<T>;
+
+
 /// @brief      Functions to perform element by element addition of vectors.
 /// @tparam T   a type of element
 /// @tparam N   the number of elements in the vector (for `SizedVec` only).
@@ -148,10 +168,44 @@ inline void __check_size(size_t n1, size_t n2) {
 }
 
 
+// === Negation ============================================================== //
+
+template <typename T, size_t N>
+auto neg(const SizedVec<T, N> &v, SizedVec<T, N>& vr) noexcept -> SizedVec<T, N> &
+{
+    __neg_core_simd(v.data(), vr.data(), N);
+    return vr;
+}
+
+template <typename T>
+auto neg(const DynVec<T> &v, DynVec<T>& vr) noexcept -> DynVec<T> &
+{
+    __check_size(v.size(), vr.size());
+    __neg_core_simd(v.data(), vr.data(), v.size());
+    return vr;
+}
+
+template <typename T, size_t N>
+auto operator-(const SizedVec<T, N> &v) noexcept -> SizedVec<T, N>
+{
+    auto vr = SizedVec<T, N>::uninit();
+    neg(v, vr);
+    return vr;
+}
+
+template <typename T>
+auto operator-(const DynVec<T> &v) noexcept -> DynVec<T>
+{
+    auto vr = DynVec<T>::uninit(v.size());
+    neg(v, vr);
+    return vr;
+}
+
 // === Addition ============================================================== //
 
-template<typename T, size_t N>
-inline auto add(const SizedVec<T, N>& v1, const SizedVec<T, N>& v2, SizedVec<T, N>& vr) noexcept -> SizedVec<T, N>& {
+template <typename T, size_t N>
+inline auto add(const SizedVec<T, N> &v1, const SizedVec<T, N> &v2, SizedVec<T, N> &vr) noexcept -> SizedVec<T, N> &
+{
     add_core(v1.data(), v2.data(), vr.data(), N);
     return vr;
 }

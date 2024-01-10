@@ -7,6 +7,24 @@
 #endif
 
 template<typename T>
+inline auto __neg_core_simd(const T* v, T* vr, size_t size) noexcept -> T* {
+    #pragma omp simd
+    for (auto i = 0u; i < size; ++i) {
+        vr[i] = -v[i];
+    }
+    return vr;
+}
+
+template<typename T>
+inline auto __neg_core_parallel(const T* v, T* vr, size_t size) noexcept -> T* {
+    #pragma omp parallel for simd
+    for (auto i = 0u; i < size; ++i) {
+        vr[i] = -v[i];
+    }
+    return vr;
+}
+
+template<typename T>
 inline auto __add_core_simd(const T* v1, const T* v2, T* vr, size_t size) noexcept -> T* {
     #pragma omp simd
     for (auto i = 0u; i < size; ++i) {
