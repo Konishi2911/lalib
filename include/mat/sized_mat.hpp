@@ -13,6 +13,8 @@ namespace lalib {
 template<typename T, size_t N, size_t M>
 struct SizedMat {
 public:
+    using ElemType = T;
+    
     // ==== Initializations ==== //
 
     /// @brief Create a sized matrix with given array with copy.
