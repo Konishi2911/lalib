@@ -24,6 +24,9 @@ public:
     template<Vector V>
     auto solve_linear(const V& b, V& rslt) noexcept -> V&;
 
+    template<Matrix M1>
+    auto solve_linear(const M1& b, M1& rslt) noexcept -> M1&;
+
 private:
     M _mat;
 };
@@ -49,9 +52,29 @@ inline auto TriDiag<M>::solve_linear(const V &b, V &rslt) noexcept -> V &
 
     #if defined(LALIB_LAPACK_BACKEND)
     rslt = b;
-    __lapack::gtsv(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), rslt.size());
+    __lapack::gtsv(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), 1);
     #else
-    __internal::tdma(n, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
+    __internal::tdma(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
+    #endif
+
+    return rslt;
+}
+
+template<TriDiagMatrix M>
+requires std::floating_point<typename M::ElemType>
+template<Matrix M1>
+inline auto lalib::solver::TriDiag<M>::solve_linear(const M1 & b, M1 & rslt) noexcept -> M1 &
+{
+    assert(this->_mat.shape().first == b.shape().first);
+    assert(b.shape() == rslt.shape());
+    auto n = this->_mat.shape().first;
+    auto nrow = b.shape().second;
+
+    #if defined(LALIB_LAPACK_BACKEND)
+    rslt = b;
+    __lapack::gtsv(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), rslt.shape().second);
+    #else
+    __internal::tdma(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
     #endif
 
     return rslt;

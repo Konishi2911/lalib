@@ -7,6 +7,8 @@ namespace lalib {
 template<typename T>
 struct DynMat {
 public:
+    using ElemType = T;
+
     // ==== Initializations ==== //
 
     /// @brief Create a sized matrix with given array with copy.
