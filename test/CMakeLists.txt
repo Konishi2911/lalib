@@ -31,7 +31,12 @@ gtest_discover_tests(mat_vec_ops_test)
 
 ## Solvers
 add_executable(tri_diag_test solver/tri_diag.cc)
-target_link_libraries(tri_diag_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+target_link_libraries(tri_diag_test PRIVATE 
+    $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
+    $<$<BOOL:${LAPACK_FOUND}>:-llapacke>
+    ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} 
+    GTest::GTest GTest::Main
+)
 gtest_discover_tests(tri_diag_test)
 
 
