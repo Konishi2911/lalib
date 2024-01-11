@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <complex>
 #include <algorithm>
-
+#include <memory>
 
 #ifdef LALIB_BLAS_BACKEND
 #include <cblas.h>
@@ -27,11 +27,25 @@ namespace lalib {
 
 template<typename T>
 inline auto __mul_core_simd(size_t n, size_t m, T alpha, const T* mat, const T* x, T beta, T* y) noexcept -> T* {
-    #pragma omp simd
-    for (auto i = 0u; i < n; ++i) {
-        y[i] = beta * y[i];
-        for (auto k = 0u; k < m; ++k) {
-            y[i] += alpha * mat[i * m + k] * x[k];
+    // If the pointers of the multiplier and one storing the result are the same
+    if (x == y) {
+        auto tmp = std::make_unique<T[]>(n);
+        #pragma omp simd
+        for (auto i = 0u; i < n; ++i) {
+            tmp[i] = beta * y[i];
+            for (auto k = 0u; k < m; ++k) {
+                tmp[i] += alpha * mat[i * m + k] * x[k];
+            }
+        }
+        std::copy(tmp.get(), tmp.get() + n, y);
+    } 
+    else {
+        #pragma omp simd
+        for (auto i = 0u; i < n; ++i) {
+            y[i] = beta * y[i];
+            for (auto k = 0u; k < m; ++k) {
+                y[i] += alpha * mat[i * m + k] * x[k];
+            }
         }
     }
     return y;
@@ -46,7 +60,13 @@ inline auto mul_core(size_t n, size_t m, T alpha, const T* mat, const T* x, T be
 template<>
 inline auto mul_core<float>(size_t n, size_t m, float alpha, const float* mat, const float* x, float beta, float* y) noexcept -> float* {
     #if defined(LALIB_BLAS_BACKEND)
-    cblas_sgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, y, 1);
+    if (x == y) {
+        auto tmp = std::make_unique<float[]>(n);
+        cblas_sgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, tmp.get(), 1);
+        std::copy(tmp.get(), tmp.get() + n, y);
+    } else {
+        cblas_sgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, y, 1);
+    }
     #else
     __mul_core_simd(n, m, alpha, mat, x, beta, y);
     #endif
@@ -56,7 +76,13 @@ inline auto mul_core<float>(size_t n, size_t m, float alpha, const float* mat, c
 template<>
 inline auto mul_core<double>(size_t n, size_t m, double alpha, const double* mat, const double* x, double beta, double* y) noexcept -> double* {
     #if defined(LALIB_BLAS_BACKEND)
-    cblas_dgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, y, 1);
+    if (x == y) {
+        auto tmp = std::make_unique<double[]>(n);
+        cblas_dgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, tmp.get(), 1);
+        std::copy(tmp.get(), tmp.get() + n, y);
+    } else {
+        cblas_dgemv(CBLAS_LAYOUT::CblasRowMajor, CBLAS_TRANSPOSE::CblasNoTrans, n, m, alpha, mat, std::max<size_t>(1u, m), x, 1, beta, y, 1);
+    }
     #else
     __mul_core_simd(n, m, alpha, mat, x, beta, y);
     #endif
