@@ -66,3 +66,16 @@ TEST(MatVecOpsTests, SizedMatDynVecMulTest) {
     EXPECT_DOUBLE_EQ(24.0, vr4[0]);
     EXPECT_DOUBLE_EQ(23.0, vr4[1]);
 }
+
+TEST(MatVecOpsTests, SizedMatSizedVecMulAssignTest) {
+    auto m = lalib::SizedMat<double, 2 ,2>({
+        1.0, 2.0,
+        2.0, 4.0
+    });
+    auto v = lalib::SizedVec<double, 2>({2.0, 3.0});
+
+    lalib::mul(1.0, m, v, 0.0, v);
+
+    EXPECT_DOUBLE_EQ(8.0, v[0]);
+    EXPECT_DOUBLE_EQ(16.0, v[1]);
+}

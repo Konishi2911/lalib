@@ -27,11 +27,25 @@ namespace lalib {
 
 template<typename T>
 inline auto __mul_core_simd(size_t n, size_t m, T alpha, const T* mat, const T* x, T beta, T* y) noexcept -> T* {
-    #pragma omp simd
-    for (auto i = 0u; i < n; ++i) {
-        y[i] = beta * y[i];
-        for (auto k = 0u; k < m; ++k) {
-            y[i] += alpha * mat[i * m + k] * x[k];
+    // If the pointers of the multiplier and one storing the result are the same
+    if (x == y) {
+        auto tmp = std::make_unique<T[]>(n);
+        #pragma omp simd
+        for (auto i = 0u; i < n; ++i) {
+            tmp[i] = beta * y[i];
+            for (auto k = 0u; k < m; ++k) {
+                tmp[i] += alpha * mat[i * m + k] * x[k];
+            }
+        }
+        std::copy(tmp.get(), tmp.get() + n, y);
+    } 
+    else {
+        #pragma omp simd
+        for (auto i = 0u; i < n; ++i) {
+            y[i] = beta * y[i];
+            for (auto k = 0u; k < m; ++k) {
+                y[i] += alpha * mat[i * m + k] * x[k];
+            }
         }
     }
     return y;
