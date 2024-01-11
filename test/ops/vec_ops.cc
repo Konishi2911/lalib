@@ -75,7 +75,7 @@ TEST(VecOpsTests, DynVecDynVecAddOpsDoubleSizeMismatchedTest) {
         {
             auto vr = v1 + v2;
         },
-        vec_error::SizeMismatched
+        lalib::vec_error::SizeMismatched
     );
 }
 
@@ -126,7 +126,7 @@ TEST(VecOpsTests, DynVecDynVecSubOpsDoubleSizeMismatchedTest) {
         {
             auto vr = v1 - v2;
         },
-        vec_error::SizeMismatched
+        lalib::vec_error::SizeMismatched
     );
 }
 
