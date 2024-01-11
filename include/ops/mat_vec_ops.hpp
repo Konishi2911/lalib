@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_MAT_VEC_OPS_HPP
+#define LALIB_MAT_VEC_OPS_HPP
+
 #include "mat_vec_ops_core.hpp"
 #include "../mat/sized_mat.hpp"
 #include "../mat/dyn_mat.hpp"
@@ -77,3 +80,5 @@ inline auto operator*(const DynMat<T>& mat, const DynVec<T>& vec) noexcept -> Dy
 }
 
 }
+
+#endif

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LALIB_MAT_HPP
+#define LALIB_MAT_HPP
 
 #include "mat/sized_mat.hpp"
 #include "mat/dyn_mat.hpp"
@@ -17,3 +19,5 @@ using DynMatC = DynMat<std::complex<float>>;
 using DynMatZ = DynMat<std::complex<double>>;
 
 }
+
+#endif

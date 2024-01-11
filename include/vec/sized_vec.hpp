@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_VEC_SIZED_VEC_HPP
+#define LALIB_VEC_SIZED_VEC_HPP
+
 #include <array>
 #include "../ops/vec_ops_core.hpp"
 
@@ -185,3 +188,5 @@ inline constexpr auto SizedVec<T, N>::norm2() const noexcept -> T
 // === Specializations of utility templates === //
 
 }
+
+#endif

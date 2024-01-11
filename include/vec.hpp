@@ -1,4 +1,6 @@
 #pragma once 
+#ifndef LALIB_VEC_HPP
+#define LALIB_VEC_HPP
 
 #include "vec/sized_vec.hpp"
 #include "vec/dyn_vec.hpp"
@@ -17,3 +19,5 @@ using DynVecC = DynVec<std::complex<float>>;
 using DynVecZ = DynVec<std::complex<double>>;
 
 }
+
+#endif

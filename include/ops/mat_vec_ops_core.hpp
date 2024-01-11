@@ -11,6 +11,9 @@
  */
 
 #pragma once
+#ifndef LALIB_MAT_VEC_OPS_CORE_HPP
+#define LALIB_MAT_VEC_OPS_CORE_HPP
+
 #include <cstddef>
 #include <complex>
 #include <algorithm>
@@ -61,3 +64,5 @@ inline auto mul_core<double>(size_t n, size_t m, double alpha, const double* mat
 }
 
 }
+
+#endif

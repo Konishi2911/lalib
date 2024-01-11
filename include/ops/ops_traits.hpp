@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_OPS_TRAIT_HPP
+#define LALIB_OPS_TRAIT_HPP
+
 #include <concepts>
 #include <complex>
 
@@ -48,3 +51,5 @@ constexpr auto reciprocal(const std::complex<T>& val) noexcept {
 }
 
 }
+
+#endif

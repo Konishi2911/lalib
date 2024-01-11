@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_ERROR_HPP
+#define LALIB_ERROR_HPP
+
 #include <cstddef>
 #include <stdexcept>
 #include <string>
@@ -20,3 +23,5 @@ SizeMismatched::SizeMismatched(size_t n1, size_t n2, std::string message) noexce
 { }
 
 }
+
+#endif

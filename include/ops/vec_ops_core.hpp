@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_VEC_OPS_CORE_HPP
+#define LALIB_VEC_OPS_CORE_HPP
+
 #include <cstddef>
 #include <complex>
 
@@ -316,3 +319,5 @@ inline auto norm2_core<double>(const double* v1, size_t size) -> double {
     #endif
     return norm;
 }
+
+#endif

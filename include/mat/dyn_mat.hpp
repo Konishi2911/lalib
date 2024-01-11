@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_MAT_DYN_MAT_HPP
+#define LALIB_MAT_DYN_MAT_HPP
+
 #include "../ops/ops_traits.hpp"
 #include <vector>
 
@@ -299,3 +302,5 @@ inline auto DynTriDiagMat<T>::data_du() noexcept -> T *
     return this->_du.data();
 }
 }
+
+#endif

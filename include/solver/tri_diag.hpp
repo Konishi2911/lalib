@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_SOLVER_TRIDIAG_HPP
+#define LALIB_SOLVER_TRIDIAG_HPP
+
 #include "../mat.hpp"
 #include "../vec.hpp"
 #include "../type_traits.hpp"
@@ -81,3 +84,5 @@ inline auto lalib::solver::TriDiag<M>::solve_linear(const M1 & b, M1 & rslt) noe
 }
 
 }
+
+#endif
