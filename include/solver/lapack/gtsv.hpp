@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_SOLVER_LAPACK_GTSV_HPP
+#define LALIB_SOLVER_LAPACK_GTSV_HPP
+
 #include <cstdint>
 #include <cstddef>
 #include <complex>
@@ -57,3 +60,5 @@ auto gtsv<std::complex<double>>(int32_t n, int32_t nrhs, std::complex<double>* d
 }
 
 }
+
+#endif

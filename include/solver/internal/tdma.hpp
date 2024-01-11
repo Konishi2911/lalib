@@ -1,4 +1,7 @@
 #pragma once 
+#ifndef LALIB_SOLVER_INTERNAL_TDMA_HPP
+#define LALIB_SOLVER_INTERNAL_TDMA_HPP
+
 #include <concepts>
 #include <vector>
 
@@ -30,3 +33,5 @@ auto tdma(size_t n, size_t nrow, const T* dl, const T* d, const T* du, const T* 
 }
 
 }
+
+#endif

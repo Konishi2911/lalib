@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_VEC_DYN_VEC_HPP
+#define LALIB_VEC_DYN_VEC_HPP
+
 #include <vector>
 #include "../ops/ops_traits.hpp"
 #include "../ops/vec_ops_core.hpp"
@@ -207,3 +210,5 @@ inline void DynVec<T>::__check_size(size_t n1, size_t n2) const {
 
 
 }
+
+#endif

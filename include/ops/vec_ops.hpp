@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_VEC_OPS_HPP
+#define LALIB_VEC_OPS_HPP
+
 #include "../vec/sized_vec.hpp"
 #include "../vec/dyn_vec.hpp"
 #include "../err/error.hpp"
@@ -399,3 +402,5 @@ auto dot(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T {
 }
 
 }
+
+#endif

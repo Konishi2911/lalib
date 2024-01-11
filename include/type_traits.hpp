@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_TYPE_TRAITS_HPP
+#define LALIB_TYPE_TRAITS_HPP
+
 #include <concepts>
 #include <type_traits>
 
@@ -43,3 +46,5 @@ requires(T& v) {
 };
 
 }
+
+#endif

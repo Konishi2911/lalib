@@ -1,4 +1,7 @@
 #pragma once
+#ifndef LALIB_MAT_SIZED_MAT_HPP
+#define LALIB_MAT_SIZED_MAT_HPP
+
 #include <array>
 #include <utility>
 #include "../ops/ops_traits.hpp"
@@ -293,3 +296,5 @@ inline auto SizedTriDiagMat<T, N>::data_du() noexcept -> T *
     return this->_du.data();
 }
 }
+
+#endif
