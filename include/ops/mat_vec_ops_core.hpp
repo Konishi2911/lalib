@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <complex>
 #include <algorithm>
-
+#include <memory>
 
 #ifdef LALIB_BLAS_BACKEND
 #include <cblas.h>
