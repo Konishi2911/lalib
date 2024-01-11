@@ -81,7 +81,7 @@ TEST(DynVecTests, DotTestSizeMismatched) {
         {
             v1.dot(v2); 
         }, 
-        vec_error::SizeMismatched
+        lalib::vec_error::SizeMismatched
     );
 }
 

@@ -4,8 +4,8 @@
 TEST(ErrorTests, VecSizeMismatchedErrorTest) {
     EXPECT_THROW(
         { 
-            throw vec_error::SizeMismatched(2, 3, "Additional Messages"); 
+            throw lalib::vec_error::SizeMismatched(2, 3, "Additional Messages"); 
         }, 
-        vec_error::SizeMismatched
+        lalib::vec_error::SizeMismatched
     );
 }
