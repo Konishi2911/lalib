@@ -28,6 +28,11 @@ add_executable(mat_vec_ops_test ops/mat_vec_ops.cc)
 target_link_libraries(mat_vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(mat_vec_ops_test)
 
+## Matrix-Matrix Operations
+add_executable(mat_mat_ops_test ops/mat_mat_ops.cc)
+target_link_libraries(mat_mat_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(mat_mat_ops_test)
+
 
 ## Solvers
 add_executable(tri_diag_test solver/tri_diag.cc)
