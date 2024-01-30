@@ -45,9 +45,9 @@ TEST(SizedVecTests, FilledTest) {
 
 TEST(SizedVecTets, DotTest) {
     auto v1 = lalib::SizedVec<double, 4>::filled(1);
-    auto v2 = lalib::SizedVec<double, 4> ({ 1.0, 2.0, 3.0, 4.0 });
+    auto v2 = lalib::SizedVec<double, 4> ({ 1.1, 2.1, 3.0, 4.0 });
 
-    ASSERT_DOUBLE_EQ(10.0, v1.dot(v2));
+    ASSERT_DOUBLE_EQ(10.2, v1.dot(v2));
 }
 
 TEST(SizedVecTets, Norm2Test) {
