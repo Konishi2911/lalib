@@ -205,9 +205,9 @@ inline auto axpy_core<std::complex<double>>(std::complex<double> alpha, const st
 
 template<typename T>
 inline auto __dot_core_simd(const T* v1, const T* v2, size_t size) -> T {
-    auto r = 0;
+    auto r = v1[0] * v2[0];
     #pragma omp simd reduction(+:r)
-    for (auto i = 0u; i < size; ++i) {
+    for (auto i = 1u; i < size; ++i) {
         r += v1[i] * v2[i];
     }
     return r;
