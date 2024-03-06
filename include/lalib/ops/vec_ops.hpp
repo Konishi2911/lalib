@@ -2,9 +2,9 @@
 #ifndef LALIB_VEC_OPS_HPP
 #define LALIB_VEC_OPS_HPP
 
-#include "../vec/sized_vec.hpp"
-#include "../vec/dyn_vec.hpp"
-#include "../err/error.hpp"
+#include "lalib/vec/sized_vec.hpp"
+#include "lalib/vec/dyn_vec.hpp"
+#include "lalib/err/error.hpp"
 #include "vec_ops_core.hpp"
 #include "ops_traits.hpp"
 

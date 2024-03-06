@@ -4,8 +4,8 @@
 
 #include <array>
 #include <utility>
-#include "../ops/ops_traits.hpp"
-#include "../type_traits.hpp"
+#include "lalib/ops/ops_traits.hpp"
+#include "lalib/type_traits.hpp"
 
 namespace lalib {
 

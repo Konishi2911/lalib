@@ -15,6 +15,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 #ifdef LALIB_BLAS_BACKEND
 #include <cblas.h>

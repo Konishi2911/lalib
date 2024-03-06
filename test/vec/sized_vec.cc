@@ -1,4 +1,4 @@
-#include "../../include/vec/sized_vec.hpp"
+#include "lalib/vec/sized_vec.hpp"
 #include <iterator>
 #include <ranges>
 #include <gtest/gtest.h>

@@ -1,4 +1,4 @@
-#include "../../include/mat/dyn_mat.hpp"
+#include "lalib/mat/dyn_mat.hpp"
 #include <gtest/gtest.h>
 
 TEST(DynMatTests, CopyConstTest) {

@@ -1,4 +1,4 @@
-#include "../..//include/ops/vec_ops.hpp"
+#include "lalib/ops/vec_ops.hpp"
 #include <gtest/gtest.h>
 
 // ### Negation ### //

@@ -2,7 +2,7 @@
 #ifndef LALIB_MAT_DYN_MAT_HPP
 #define LALIB_MAT_DYN_MAT_HPP
 
-#include "../ops/ops_traits.hpp"
+#include "lalib/ops/ops_traits.hpp"
 #include <vector>
 
 namespace lalib {

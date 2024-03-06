@@ -1,4 +1,4 @@
-#include "../../include/mat/sized_mat.hpp"
+#include "lalib/mat/sized_mat.hpp"
 #include <gtest/gtest.h>
 
 TEST(SizedMatTests, CopyConstTest) {

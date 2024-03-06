@@ -3,10 +3,10 @@
 #define LALIB_MAT_MAT_OPS_HPP
 
 #include "mat_mat_ops_core.hpp"
-#include "../mat/sized_mat.hpp"
-#include "../mat/dyn_mat.hpp"
-#include "../vec/sized_vec.hpp"
-#include "../vec/dyn_vec.hpp"
+#include "lalib/mat/sized_mat.hpp"
+#include "lalib/mat/dyn_mat.hpp"
+#include "lalib/vec/sized_vec.hpp"
+#include "lalib/vec/dyn_vec.hpp"
 #include <cassert>
 
 namespace lalib {

@@ -3,9 +3,9 @@
 #define LALIB_VEC_DYN_VEC_HPP
 
 #include <vector>
-#include "../ops/ops_traits.hpp"
-#include "../ops/vec_ops_core.hpp"
-#include "../err/error.hpp"
+#include "lalib/ops/ops_traits.hpp"
+#include "lalib/ops/vec_ops_core.hpp"
+#include "lalib/err/error.hpp"
 
 namespace lalib {
 

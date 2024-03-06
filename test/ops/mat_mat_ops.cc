@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../..//include/ops/mat_mat_ops.hpp"
+#include "lalib/ops/mat_mat_ops.hpp"
 #include <iostream>
 
 TEST(MatMatOpsTests, SizedMatSizedMatMulTest) {
