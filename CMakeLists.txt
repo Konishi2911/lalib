@@ -20,25 +20,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 
-option(LALIB_BACKEND "Backend" "Internal")
-if (LALIB_BACKEND MATCHES "Internal")
-	add_compile_definitions(LALIB_INTERNAL_BACKEND)
-elseif (LALIB_BACKEND MATCHES "BLAS")
-	find_package(BLAS REQUIRED)
-	add_compile_definitions(LALIB_BLAS_BACKEND)
-elseif (LALIB_BACKEND MATCHES "LAPACK")
-	find_package(LAPACK REQUIRED)
-	add_compile_definitions(LALIB_BLAS_BACKEND LALIB_LAPACK_BACKEND)
-endif()
-
-option(LALIB_USE_ACCELERATOR "Accelerator" "FALSE")
-if (LALIB_USE_ACCELERATOR)
-	if (${OpenMP_CXX_VERSION} VERSION_LESS 4.5)
-		message(FATAL_ERROR "OpenMP version 4.5 is required to enable hardware acceleration.")
-	endif()
-	add_compile_definitions(LALIB_USE_ACCELERATOR)
-endif()
-
+include(cmake/backend.cmake)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
