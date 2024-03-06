@@ -1,4 +1,4 @@
-#include "../../include/vec/dyn_vec.hpp"
+#include "lalib/vec/dyn_vec.hpp"
 #include <iterator>
 #include <ranges>
 #include <algorithm>

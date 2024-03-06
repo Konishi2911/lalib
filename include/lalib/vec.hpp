@@ -2,9 +2,9 @@
 #ifndef LALIB_VEC_HPP
 #define LALIB_VEC_HPP
 
-#include "vec/sized_vec.hpp"
-#include "vec/dyn_vec.hpp"
-#include "ops/vec_ops.hpp"
+#include "lalib/vec/sized_vec.hpp"
+#include "lalib/vec/dyn_vec.hpp"
+#include "lalib/ops/vec_ops.hpp"
 
 namespace lalib {
 

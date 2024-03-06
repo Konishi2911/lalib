@@ -2,9 +2,9 @@
 #ifndef LALIB_SOLVER_TRIDIAG_HPP
 #define LALIB_SOLVER_TRIDIAG_HPP
 
-#include "../mat.hpp"
-#include "../vec.hpp"
-#include "../type_traits.hpp"
+#include "lalib/mat.hpp"
+#include "lalib/vec.hpp"
+#include "lalib/type_traits.hpp"
 #include <concepts>
 #include <vector>
 #include <utility>

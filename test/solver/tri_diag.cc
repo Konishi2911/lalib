@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../include/solver/tri_diag.hpp"
+#include "lalib/solver/tri_diag.hpp"
 
 TEST(TriDiagSolverTests, SizedLinearSolverTest) {
     auto mat = lalib::SizedTriDiagMat<double, 4>(

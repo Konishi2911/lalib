@@ -2,10 +2,10 @@
 #ifndef LALIB_MAT_HPP
 #define LALIB_MAT_HPP
 
-#include "mat/sized_mat.hpp"
-#include "mat/dyn_mat.hpp"
-#include "ops/mat_vec_ops.hpp"
-#include "ops/mat_mat_ops.hpp"
+#include "lalib/mat/sized_mat.hpp"
+#include "lalib/mat/dyn_mat.hpp"
+#include "lalib/ops/mat_vec_ops.hpp"
+#include "lalib/ops/mat_mat_ops.hpp"
 
 namespace lalib {
 

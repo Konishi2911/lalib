@@ -1,4 +1,4 @@
-#include "../../include/err/error.hpp"
+#include "lalib/err/error.hpp"
 #include <gtest/gtest.h>
 
 TEST(ErrorTests, VecSizeMismatchedErrorTest) {

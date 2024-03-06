@@ -3,7 +3,7 @@
 #define LALIB_VEC_SIZED_VEC_HPP
 
 #include <array>
-#include "../ops/vec_ops_core.hpp"
+#include "lalib/ops/vec_ops_core.hpp"
 
 namespace lalib {
 

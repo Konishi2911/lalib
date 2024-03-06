@@ -1,4 +1,4 @@
-#include "../..//include/ops/mat_vec_ops.hpp"
+#include "lalib/ops/mat_vec_ops.hpp"
 #include <iostream>
 #include <gtest/gtest.h>
 

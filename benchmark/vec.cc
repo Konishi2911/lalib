@@ -1,6 +1,6 @@
-#include "../include/vec/sized_vec.hpp"
-#include "../include/vec/dyn_vec.hpp"
-#include "../include/ops/vec_ops.hpp"
+#include "lalib/vec/sized_vec.hpp"
+#include "lalib/vec/dyn_vec.hpp"
+#include "lalib/ops/vec_ops.hpp"
 #include <iostream>
 #include <iomanip>
 #include <random>
