@@ -1,4 +1,5 @@
 #include "lalib/ops/vec_ops.hpp"
+#include "lalib/vec/sized_vec.hpp"
 #include <gtest/gtest.h>
 
 // ### Negation ### //
@@ -287,4 +288,27 @@ TEST(VecOpsTests, DynVecCross3ProductFailureTest) {
     auto vr = lalib::DynVec<double>({1.0, 1.0, 1.0});
 
     ASSERT_DEATH({ lalib::cross(v, vr, vr); }, "");
+}
+
+TEST(VecOpsTests, SizedVecCross3AccTest) {
+    auto v1 = lalib::SizedVec<double, 3>({1.0, 0.0, 0.0});
+    auto v2 = lalib::SizedVec<double, 3>({0.0, 1.0, 0.0});
+    auto v3 = lalib::SizedVec<double, 3>::filled(1.0);
+
+    auto vr1 = lalib::SizedVec<double, 3>::filled(1.0);
+    lalib::cross_acc(v1, v2, vr1);
+    ASSERT_DOUBLE_EQ(1.0, vr1[0]);
+    ASSERT_DOUBLE_EQ(1.0, vr1[1]);
+    ASSERT_DOUBLE_EQ(2.0, vr1[2]);
+
+    auto vr2 = lalib::SizedVec<double, 3>::filled(1.0);
+    lalib::cross_acc(v2, v1, vr2);
+    ASSERT_DOUBLE_EQ(1.0, vr2[0]);
+    ASSERT_DOUBLE_EQ(1.0, vr2[1]);
+    ASSERT_DOUBLE_EQ(0.0, vr2[2]);
+
+    lalib::cross_acc(v1, v3, v3);
+    ASSERT_DOUBLE_EQ(1.0, v3[0]);
+    ASSERT_DOUBLE_EQ(0.0, v3[1]);
+    ASSERT_DOUBLE_EQ(2.0, v3[2]);
 }
