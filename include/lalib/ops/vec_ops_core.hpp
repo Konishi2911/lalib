@@ -242,6 +242,25 @@ inline auto dot_core<double>(const double* v1, const double* v2, size_t size) ->
 }
 
 
+// ==== Crosses ==== //
+
+template<typename T>
+inline auto cross2_core(const T* v1, const T* v2) -> T {
+    auto c = v1[0] * v2[1] - v2[0] * v1[1];
+    return c;
+}
+
+template<typename T>
+inline auto cross3_core(const T* v1, const T* v2, T* vr) -> T* {
+    auto r0 = v1[1] * v2[2] - v2[1] * v1[2];
+    auto r1 = v1[2] * v2[0] - v2[2] * v1[0];
+    auto r2 = v1[0] * v2[1] - v2[0] * v1[1];
+
+    vr[0] = r0; vr[1] = r1; vr[2] = r2;
+    return vr;
+}
+
+
 // ==== Scales ==== //
 
 template<typename T>

@@ -245,3 +245,41 @@ TEST(VecOpsTests, DynVecScalarDivOpTest) {
     ASSERT_DOUBLE_EQ(2.0 / 3.0, vr[3]);
     ASSERT_DOUBLE_EQ(4.0 / 3.0, vr[4]);
 }
+
+// # Cross product tests
+TEST(VecOpsTests, SizedVecCross2ProductTest) {
+    auto v1 = lalib::SizedVec<double, 2>({1.0, 0.0});
+    auto v2 = lalib::SizedVec<double, 2>({0.0, 1.0});
+
+    ASSERT_DOUBLE_EQ(1.0, lalib::cross(v1, v2));
+    ASSERT_DOUBLE_EQ(-1.0, lalib::cross(v2, v1));
+}
+
+TEST(VecOpsTests, SizedVecCorss3ProductTest) {
+    auto v1 = lalib::SizedVec<double, 3>({1.0, 0.0, 0.0});
+    auto v2 = lalib::SizedVec<double, 3>({0.0, 1.0, 0.0});
+    auto v3 = lalib::SizedVec<double, 3>::filled(1.0);
+    auto vr = lalib::SizedVec<double, 3>({1.0, 1.0, 1.0});
+
+    lalib::cross(v1, v2, vr);
+    ASSERT_DOUBLE_EQ(0.0, vr[0]);
+    ASSERT_DOUBLE_EQ(0.0, vr[1]);
+    ASSERT_DOUBLE_EQ(1.0, vr[2]);
+
+    lalib::cross(v2, v1, vr);
+    ASSERT_DOUBLE_EQ(0.0, vr[0]);
+    ASSERT_DOUBLE_EQ(0.0, vr[1]);
+    ASSERT_DOUBLE_EQ(-1.0, vr[2]);
+
+    lalib::cross(v1, v3, v3);
+    ASSERT_DOUBLE_EQ(0.0, v3[0]);
+    ASSERT_DOUBLE_EQ(-1.0, v3[1]);
+    ASSERT_DOUBLE_EQ(1.0, v3[2]);
+}
+
+TEST(VecOpsTests, DynVecCross3ProductFailureTest) {
+    auto v = lalib::DynVec<double>::filled(4, 1.0);
+    auto vr = lalib::DynVec<double>({1.0, 1.0, 1.0});
+
+    ASSERT_DEATH({ lalib::cross(v, vr, vr); }, "");
+}
