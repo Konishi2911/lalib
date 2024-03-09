@@ -177,24 +177,34 @@ inline auto cross(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T;
 
 
 template<typename T>
+inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y) noexcept -> SizedVec<T, 3>;
+template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>&;
 template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y, DynVec<T>& vr) noexcept -> DynVec<T>&;
 
+template<typename T>
+inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y) noexcept -> SizedVec<T, 3>;
 template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>&;
 template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y, DynVec<T>& vr) noexcept -> DynVec<T>&;
 
 template<typename T>
+inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y) noexcept -> SizedVec<T, 3>;
+template<typename T>
 inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>&;
 template<typename T>
 inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y, DynVec<T>& vr) noexcept -> DynVec<T>&;
 
 template<typename T>
+inline auto cross(const DynVec<T>& x, const DynVec<T>& y) noexcept -> SizedVec<T, 3>;
+template<typename T>
 inline auto cross(const DynVec<T>& x, const DynVec<T>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>&;
 template<typename T>
 inline auto cross(const DynVec<T>& x, const DynVec<T>& y, DynVec<T>& vr) noexcept -> DynVec<T>&;
+
+
 
 
 // ### Implementations ### //
@@ -469,6 +479,12 @@ inline auto cross(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T {
 
 
 template<typename T>
+inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y) noexcept -> SizedVec<T, 3> {
+    auto vr = x;
+    cross3_core(x.data(), y.data(), vr.data());
+    return vr;
+}
+template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>& {
     cross3_core(x.data(), y.data(), vr.data());
     return vr;
@@ -480,6 +496,13 @@ inline auto cross(const SizedVec<T, 3>& x, const SizedVec<T, 3>& y, DynVec<T>& v
     return vr;
 }
 
+template<typename T>
+inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y) noexcept -> SizedVec<T, 3> {
+    assert(y.size() == 3);
+    auto vr = x;
+    cross3_core(x.data(), y.data(), vr.data());
+    return vr;
+}
 template<typename T>
 inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>& {
     assert(y.size() == 3);
@@ -495,8 +518,15 @@ inline auto cross(const SizedVec<T, 3>& x, const DynVec<T>& y, DynVec<T>& vr) no
 }
 
 template<typename T>
+inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y) noexcept -> SizedVec<T, 3> {
+    assert(x.size() == 3);
+    auto vr = x;
+    cross3_core(x.data(), y.data(), vr.data());
+    return vr;
+}
+template<typename T>
 inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>& {
-    assert(vr.size() == 3);
+    assert(x.size() == 3);
     cross3_core(x.data(), y.data(), vr.data());
     return vr;
 }
@@ -508,6 +538,14 @@ inline auto cross(const DynVec<T>& x, const SizedVec<T, 3>& y, DynVec<T>& vr) no
     return vr;
 }
 
+template<typename T>
+inline auto cross(const DynVec<T>& x, const DynVec<T>& y) noexcept -> SizedVec<T, 3> {
+    assert(x.size() == 3);
+    assert(y.size() == 3);
+    auto vr = x;
+    cross3_core(x.data(), y.data(), vr.data());
+    return vr;
+}
 template<typename T>
 inline auto cross(const DynVec<T>& x, const DynVec<T>& y, SizedVec<T, 3>& vr) noexcept -> SizedVec<T, 3>& {
     assert(x.size() == 3);

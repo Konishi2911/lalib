@@ -275,6 +275,11 @@ TEST(VecOpsTests, SizedVecCorss3ProductTest) {
     ASSERT_DOUBLE_EQ(0.0, v3[0]);
     ASSERT_DOUBLE_EQ(-1.0, v3[1]);
     ASSERT_DOUBLE_EQ(1.0, v3[2]);
+
+    auto v_tmp = lalib::cross(v2, v1);
+    ASSERT_DOUBLE_EQ(0.0, v_tmp[0]);
+    ASSERT_DOUBLE_EQ(0.0, v_tmp[1]);
+    ASSERT_DOUBLE_EQ(-1.0, v_tmp[2]);
 }
 
 TEST(VecOpsTests, DynVecCross3ProductFailureTest) {
