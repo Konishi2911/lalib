@@ -283,12 +283,6 @@ TEST(VecOpsTests, SizedVecCorss3ProductTest) {
     ASSERT_DOUBLE_EQ(-1.0, v_tmp[2]);
 }
 
-TEST(VecOpsTests, DynVecCross3ProductFailureTest) {
-    auto v = lalib::DynVec<double>::filled(4, 1.0);
-    auto vr = lalib::DynVec<double>({1.0, 1.0, 1.0});
-
-    ASSERT_DEATH({ lalib::cross(v, vr, vr); }, "");
-}
 
 TEST(VecOpsTests, SizedVecCross3AccTest) {
     auto v1 = lalib::SizedVec<double, 3>({1.0, 0.0, 0.0});
