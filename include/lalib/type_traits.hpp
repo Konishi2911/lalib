@@ -2,6 +2,8 @@
 #ifndef LALIB_TYPE_TRAITS_HPP
 #define LALIB_TYPE_TRAITS_HPP
 
+#include <cstddef>
+#include <utility>
 #include <concepts>
 #include <type_traits>
 
