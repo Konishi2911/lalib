@@ -157,10 +157,10 @@ inline auto operator*(T alpha, const DynVec<T>& x) noexcept -> DynVec<T>;
 /// @param y 
 /// @return 
 template<typename T, size_t N>
-inline auto dot(const SizedVec<T, N>& x, SizedVec<T, N>& y) noexcept -> T;
+inline auto dot(const SizedVec<T, N>& x, const SizedVec<T, N>& y) noexcept -> T;
 
 template<typename T>
-inline auto dot(const DynVec<T>& x, DynVec<T>& y) noexcept -> T;
+inline auto dot(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T;
 
 
 template<typename T>
@@ -452,13 +452,13 @@ auto operator/(const DynVec<T>& x, T alpha) noexcept -> DynVec<T> {
 // === DOT ============================================================== //
 
 template<typename T, size_t N>
-auto dot(const SizedVec<T, N>& x, const SizedVec<T, N>& y) noexcept -> T {
+inline auto dot(const SizedVec<T, N>& x, const SizedVec<T, N>& y) noexcept -> T {
     T d;
     d = dot_core(x.data(), y.data(), x.size());
     return d;
 }
 template<typename T>
-auto dot(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T {
+inline auto dot(const DynVec<T>& x, const DynVec<T>& y) noexcept -> T {
     T d;
     __check_size(x.size(), y.size());
     d = dot_core(x.data(), y.data(), x.size());
