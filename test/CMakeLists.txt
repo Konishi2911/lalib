@@ -33,6 +33,11 @@ add_executable(lalib_mat_mat_ops_test ops/mat_mat_ops.cc)
 target_link_libraries(lalib_mat_mat_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(lalib_mat_mat_ops_test)
 
+## Vector Orthogonalization
+add_executable(lalib_orth_test ops/orthogonal.cc)
+target_link_libraries(lalib_orth_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(lalib_orth_test)
+
 
 ## Solvers
 add_executable(lalib_tri_diag_test solver/tri_diag.cc)
