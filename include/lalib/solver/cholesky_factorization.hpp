@@ -1,12 +1,15 @@
 #pragma once
-#include "lalib/mat/dyn_mat.hpp"
-#include "lalib/solver/lapack/potr.hpp"
 #ifndef LALIB_SOLVER_CHOLESKY_HPP
 #define LALIB_SOLVER_CHOLESKY_HPP
 
+#include "lalib/mat/dyn_mat.hpp"
 #include "lalib/solver/internal/cholesky_decomposition.hpp"
 #include "lalib/type_traits.hpp"
 #include "lalib/mat.hpp"
+
+#if defined(LALIB_LAPACK_BACKEND)
+#include "lalib/solver/lapack/potr.hpp"
+#endif
 
 namespace lalib::solver {
 
