@@ -5,11 +5,108 @@
 #include "mat_mat_ops_core.hpp"
 #include "lalib/mat/sized_mat.hpp"
 #include "lalib/mat/dyn_mat.hpp"
-#include "lalib/vec/sized_vec.hpp"
-#include "lalib/vec/dyn_vec.hpp"
+#include "lalib/ops/vec_ops_core.hpp"
 #include <cassert>
 
 namespace lalib {
+
+// =============== //
+//  ADD            //
+// =============== //
+
+template<typename T, size_t N, size_t M>
+inline auto add(const SizedMat<T, N, M>& m1, const SizedMat<T, N, M>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    add_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto add(const SizedMat<T, N, M>& m1, const DynMat<T>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    assert(m1.shape() == m2.shape());
+    add_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto add(const DynMat<T>& m1, const SizedMat<T, N, M>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    assert(m1.shape() == m2.shape());
+    add_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T>
+inline auto add(const DynMat<T>& m1, const DynMat<T>& m2, DynMat<T>& mr) noexcept -> DynMat<T>& {
+    assert(m1.shape() == m2.shape());
+    assert(m1.shape() == mr.shape());
+    add_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto operator+(const SizedMat<T, N, M>& m1, const SizedMat<T, N, M>& m2) noexcept -> SizedMat<T, N, M> {
+    auto mr = SizedMat(m1);
+    add(m1, m2, mr);
+    return mr;
+}
+
+template<typename T>
+inline auto operator+(const DynMat<T>& m1, const DynMat<T>& m2) noexcept -> DynMat<T> {
+    auto mr = DynMat(m1);
+    add(m1, m2, mr);
+    return mr;
+}
+
+
+// =============== //
+//  SUB            //
+// =============== //
+
+template<typename T, size_t N, size_t M>
+inline auto sub(const SizedMat<T, N, M>& m1, const SizedMat<T, N, M>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    sub_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto sub(const SizedMat<T, N, M>& m1, const DynMat<T>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    assert(m1.shape() == m2.shape());
+    sub_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto sub(const DynMat<T>& m1, const SizedMat<T, N, M>& m2, SizedMat<T, N, M>& mr) noexcept -> SizedMat<T, N, M>& {
+    assert(m1.shape() == m2.shape());
+    sub_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T>
+inline auto sub(const DynMat<T>& m1, const DynMat<T>& m2, DynMat<T>& mr) noexcept -> DynMat<T>& {
+    assert(m1.shape() == m2.shape());
+    assert(m1.shape() == mr.shape());
+    sub_core(m1.data(), m2.data(), mr.data(), m1.shape().first * m1.shape().second);
+    return mr;
+}
+
+template<typename T, size_t N, size_t M>
+inline auto operator-(const SizedMat<T, N, M>& m1, const SizedMat<T, N, M>& m2) noexcept -> SizedMat<T, N, M> {
+    auto mr = SizedMat(m1);
+    sub(m1, m2, mr);
+    return mr;
+}
+
+template<typename T>
+inline auto operator-(const DynMat<T>& m1, const DynMat<T>& m2) noexcept -> DynMat<T> {
+    auto mr = DynMat(m1);
+    sub(m1, m2, mr);
+    return mr;
+}
+
+
+// =============== //
+//  MUL            //
+// =============== //
 
 template<typename T, size_t N, size_t M, size_t L>
 inline auto mul(T alpha, const SizedMat<T, N, L>& a, const SizedMat<T, L, M>& b, T beta, SizedMat<T, N, M>& c) noexcept -> SizedMat<T, N, M>& {
