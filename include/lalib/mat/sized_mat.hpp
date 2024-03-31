@@ -295,6 +295,130 @@ inline auto SizedTriDiagMat<T, N>::data_du() noexcept -> T *
 {
     return this->_du.data();
 }
+
+
+/*  ##############################  *
+    Sized Lower Triangular Matrix
+ *  ##############################  */   
+
+template<typename T, size_t N>
+struct SizedLowerTriMat {
+    SizedLowerTriMat(const std::array<T, N * (N + 1) / 2>& lower_elems) noexcept;
+
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    constexpr auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    auto lower_data() const noexcept -> const T*;
+    auto lower_data() noexcept -> T*;
+
+private:
+    std::array<T, N * (N + 1) / 2> _lower_elems;
+};
+
+template<typename T, size_t N>
+SizedLowerTriMat<T, N>::SizedLowerTriMat(const std::array<T, N * (N + 1) / 2>& lower_elems) noexcept:
+    _lower_elems(lower_elems)
+{}
+
+
+template<typename T, size_t N>
+constexpr auto SizedLowerTriMat<T, N>::shape() const noexcept -> std::pair<size_t, size_t> {
+    return std::make_pair(N, N);
+}
+
+template<typename T, size_t N>
+constexpr auto SizedLowerTriMat<T, N>::operator()(size_t i, size_t j) const -> const T& {
+    if (i < j) { std::swap(i, j); }
+    return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T, size_t N>
+constexpr auto SizedLowerTriMat<T, N>::operator()(size_t i, size_t j) -> T& {
+    if (i < j) { std::swap(i, j); }
+    return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T, size_t N>
+auto SizedLowerTriMat<T, N>::lower_data() const noexcept -> const T* {
+    return this->_lower_elems.data();
+}
+
+template<typename T, size_t N>
+auto SizedLowerTriMat<T, N>::lower_data() noexcept -> T* {
+    return this->_lower_elems.data();
+}
+
+
+/*  ############################  *
+    Sized Hermiteian Matrix
+ *  ############################  */   
+
+template<typename T, size_t N>
+struct SizedHermiteMat {
+    SizedHermiteMat(const std::array<T, N * (N + 1) / 2>& lower_elems) noexcept;
+
+    /// @brief  Creates a lower triangular matrix by truncating the upper triangular elements.
+    /// @warning    Don't use this instance after calling this function because underlaying element vector will be moved.
+    auto into_lower_mat() noexcept -> SizedLowerTriMat<T, N>;
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    constexpr auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    auto lower_data() const noexcept -> const T*;
+    auto lower_data() noexcept -> T*;
+
+private:
+    std::array<T, N * (N + 1) / 2> _lower_elems;
+};
+
+template<typename T, size_t N>
+SizedHermiteMat<T, N>::SizedHermiteMat(const std::array<T, N * (N + 1) / 2>& lower_elems) noexcept:
+    _lower_elems(lower_elems)
+{}
+
+
+template<typename T, size_t N>
+auto SizedHermiteMat<T, N>::into_lower_mat() noexcept -> SizedLowerTriMat<T, N> {
+    auto lm = SizedLowerTriMat<T, N>(std::move(this->_lower_elems));
+    return lm;
+}
+
+template<typename T, size_t N>
+constexpr auto SizedHermiteMat<T, N>::shape() const noexcept -> std::pair<size_t, size_t> {
+    return std::make_pair(N, N);
+}
+
+template<typename T, size_t N>
+constexpr auto SizedHermiteMat<T, N>::operator()(size_t i, size_t j) const -> const T& {
+    if (i < j) { std::swap(i, j); }
+    return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T, size_t N>
+constexpr auto SizedHermiteMat<T, N>::operator()(size_t i, size_t j) -> T& {
+    if (i < j) { std::swap(i, j); }
+    return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T, size_t N>
+auto SizedHermiteMat<T, N>::lower_data() const noexcept -> const T* {
+    return this->_lower_elems.data();
+}
+
+template<typename T, size_t N>
+auto SizedHermiteMat<T, N>::lower_data() noexcept -> T* {
+    return this->_lower_elems.data();
+}
+
+
+
 }
 
 #endif

@@ -2,6 +2,36 @@
 #include "lalib/ops/mat_mat_ops.hpp"
 #include <iostream>
 
+TEST(MatMatOpsTests, SizedMatSizedMatAddTest) {
+    auto m1 = lalib::SizedMat<double, 2, 3>({
+        1.0, 3.0, 5.0,
+        2.0, 4.0, 6.0
+    });
+    auto m2 = m1 + m1;
+
+    ASSERT_DOUBLE_EQ(2 * m1(0, 0), m2(0, 0));
+    ASSERT_DOUBLE_EQ(2 * m1(0, 1), m2(0, 1));
+    ASSERT_DOUBLE_EQ(2 * m1(0, 2), m2(0, 2));
+    ASSERT_DOUBLE_EQ(2 * m1(1, 0), m2(1, 0));
+    ASSERT_DOUBLE_EQ(2 * m1(1, 1), m2(1, 1));
+    ASSERT_DOUBLE_EQ(2 * m1(1, 2), m2(1, 2));
+}
+
+TEST(MatMatOpsTests, SizedMatSizedMatSubTest) {
+    auto m1 = lalib::SizedMat<double, 2, 3>({
+        1.0, 3.0, 5.0,
+        2.0, 4.0, 6.0
+    });
+    auto m2 = m1 - m1;
+
+    ASSERT_DOUBLE_EQ(0.0, m2(0, 0));
+    ASSERT_DOUBLE_EQ(0.0, m2(0, 1));
+    ASSERT_DOUBLE_EQ(0.0, m2(0, 2));
+    ASSERT_DOUBLE_EQ(0.0, m2(1, 0));
+    ASSERT_DOUBLE_EQ(0.0, m2(1, 1));
+    ASSERT_DOUBLE_EQ(0.0, m2(1, 2));
+}
+
 TEST(MatMatOpsTests, SizedMatSizedMatMulTest) {
     auto m1 = lalib::SizedMat<double, 2, 3>({
         1.0, 3.0, 5.0,
