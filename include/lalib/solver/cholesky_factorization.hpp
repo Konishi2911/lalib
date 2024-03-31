@@ -14,7 +14,7 @@ template<typename T>
 struct DynTriCholeskyFactorization {
     DynTriCholeskyFactorization(lalib::DynHermiteMat<T>&& mat);
 
-	auto lower_matrix() const noexcept -> const lalib::DynLowerTriMat<T>&;
+	auto lower_mat() const noexcept -> const lalib::DynLowerTriMat<T>&;
 
     template<Vector V>
     auto solve_linear(const V& rhs, V& rslt) const -> V&;
@@ -31,7 +31,7 @@ template<typename T>
 struct DynCholeskyFactorization {
     DynCholeskyFactorization(lalib::DynMat<T>&& mat);
 
-	auto factor_matrix() const noexcept -> const lalib::DynMat<T>&;
+	auto factor_mat() const noexcept -> const lalib::DynMat<T>&;
 
     template<Vector V>
     auto solve_linear(const V& rhs, V& rslt) const -> V&;
@@ -58,7 +58,7 @@ inline DynTriCholeskyFactorization<T>::DynTriCholeskyFactorization(lalib::DynHer
 
 
 template<typename T>
-inline auto DynTriCholeskyFactorization<T>::lower_matrix() const noexcept -> const lalib::DynLowerTriMat<T>& {
+inline auto DynTriCholeskyFactorization<T>::lower_mat() const noexcept -> const lalib::DynLowerTriMat<T>& {
 	return this->_data;
 }
 
@@ -88,12 +88,12 @@ inline auto DynTriCholeskyFactorization<T>::solve_linear(const M& rhs, M& rslt) 
 template<typename T>
 inline DynCholeskyFactorization<T>::DynCholeskyFactorization(lalib::DynMat<T>&& mat):
     _n(mat.shape().first),
-    _data(mat.into_lower_mat())
+    _data(std::move(mat))
 { 
 	#if defined LALIB_LAPACK_BACKEND
-	auto rslt = _lapack_::potrf(this->_n, this->_data.lower_data(), this->_n);
+	auto rslt = _lapack_::potrf(this->_n, this->_data.data(), this->_n);
 	#else
-    auto rslt = _internal_::cholesky_decomposition<T, _internal_::MemType::Square>(this->_n, this->_data.lower_data());
+    auto rslt = _internal_::cholesky_decomposition<T, _internal_::MemType::Square>(this->_n, this->_data.data());
 	#endif
 
 	if (rslt != 0) {
@@ -103,7 +103,7 @@ inline DynCholeskyFactorization<T>::DynCholeskyFactorization(lalib::DynMat<T>&& 
 
 
 template<typename T>
-inline auto DynCholeskyFactorization<T>::factor_matrix() const noexcept -> const lalib::DynMat<T>& {
+inline auto DynCholeskyFactorization<T>::factor_mat() const noexcept -> const lalib::DynMat<T>& {
 	return this->_data;
 }
 
@@ -115,10 +115,10 @@ inline auto DynCholeskyFactorization<T>::solve_linear(const V& rhs, V& rslt) con
 
 	#if defined LALIB_LAPACK_BACKEND
 	rslt = rhs;
-	_lapack_::potrs(rhs.size(), 1, this->_data.lower_data(), rhs.size(), rslt.data(), rslt.size());
+	_lapack_::potrs(rhs.size(), 1, this->_data.data(), this->_n, rslt.data(), 1);
 	#else
 	_internal_::cholesky_linear<double, _internal_::MemType::Square>
-		(rhs.size(), 1, this->_data.lower_data(), rhs.data(), rslt.data());
+		(rhs.size(), 1, this->_data.data(), rhs.data(), rslt.data());
 	#endif
 	return rslt;
 }
@@ -132,10 +132,10 @@ inline auto DynCholeskyFactorization<T>::solve_linear(const M& rhs, M& rslt) con
 
 	#if defined LALIB_LAPACK_BACKEND
 	rslt = rhs;
-	_lapack_::potrs(rhs.shape().first, rhs.shape().second, this->_data.lower_data(), this->_data.shape().first, rslt.data(), rslt.shape().first);
+	_lapack_::potrs(rhs.shape().first, rhs.shape().second, this->_data.data(), this->_n, rslt.data(), rslt.shape().second);
 	#else
 	_internal_::cholesky_linear<double, _internal_::MemType::Square>
-		(rhs.shape().first, rhs.shape().second, this->_data.lower_data(), rhs.data(), rslt.data());
+		(rhs.shape().first, rhs.shape().second, this->_data.data(), rhs.data(), rslt.data());
 	#endif
 	return rslt;
 }
