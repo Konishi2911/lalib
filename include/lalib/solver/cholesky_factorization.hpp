@@ -17,10 +17,16 @@ struct DynTriCholeskyFactorization {
 	auto lower_mat() const noexcept -> const lalib::DynLowerTriMat<T>&;
 
     template<Vector V>
-    auto solve_linear(const V& rhs, V& rslt) const -> V&;
+    auto solve_linear_mut(V& rhs) const -> V&;
+
+    template<Vector V>
+    auto solve_linear(const V& rhs) const -> V;
 
     template<Matrix M>
-    auto solve_linear(const M& rhs, M& rslt) const -> M&;
+    auto solve_linear_mut(M& rhs) const -> M&;
+
+    template<Matrix M>
+    auto solve_linear(const M& rhs) const -> M;
 
 private:
     size_t _n;
@@ -34,10 +40,16 @@ struct DynCholeskyFactorization {
 	auto factor_mat() const noexcept -> const lalib::DynMat<T>&;
 
     template<Vector V>
-    auto solve_linear(const V& rhs, V& rslt) const -> V&;
+    auto solve_linear_mut(V& rslt) const -> V&;
+
+    template<Vector V>
+    auto solve_linear(const V& rhs) const -> V;
 
     template<Matrix M>
-    auto solve_linear(const M& rhs, M& rslt) const -> M&;
+    auto solve_linear_mut(M& rslt) const -> M&;
+
+    template<Matrix M>
+    auto solve_linear(const M& rhs) const -> M;
 
 private:
     size_t _n;
@@ -65,9 +77,20 @@ inline auto DynTriCholeskyFactorization<T>::lower_mat() const noexcept -> const 
 
 template<typename T>
 template<Vector V>
-inline auto DynTriCholeskyFactorization<T>::solve_linear(const V& rhs, V& rslt) const -> V& {
+inline auto DynTriCholeskyFactorization<T>::solve_linear_mut(V& rhs) const -> V& {
    	assert(this->_data.shape().first == rhs.size());
 
+	_internal_::cholesky_linear<double, _internal_::MemType::Triangle>
+		(rhs.size(), 1, this->_data.lower_data(), rhs.data(), rhs.data());
+	return rhs;
+}
+
+template<typename T>
+template<Vector V>
+inline auto DynTriCholeskyFactorization<T>::solve_linear(const V& rhs) const -> V {
+   	assert(this->_data.shape().first == rhs.size());
+
+	auto rslt = rhs;
 	_internal_::cholesky_linear<double, _internal_::MemType::Triangle>
 		(rhs.size(), 1, this->_data.lower_data(), rhs.data(), rslt.data());
 	return rslt;
@@ -75,11 +98,24 @@ inline auto DynTriCholeskyFactorization<T>::solve_linear(const V& rhs, V& rslt) 
 
 template<typename T>
 template<Matrix M>
-inline auto DynTriCholeskyFactorization<T>::solve_linear(const M& rhs, M& rslt) const -> M& {
+inline auto DynTriCholeskyFactorization<T>::solve_linear_mut(M& rhs) const -> M& {
    	assert(this->_data.shape().first == rhs.shape().first);
    	assert(rhs.shape().first == rhs.shape().first);
    	assert(rhs.shape().second == rhs.shape().second);
 
+	_internal_::cholesky_linear<double, _internal_::MemType::Triangle>
+		(rhs.shape().first, rhs.shape().second, this->_data.lower_data(), rhs.data(), rhs.data());
+	return rhs;
+}
+
+template<typename T>
+template<Matrix M>
+inline auto DynTriCholeskyFactorization<T>::solve_linear(const M& rhs) const -> M {
+   	assert(this->_data.shape().first == rhs.shape().first);
+   	assert(rhs.shape().first == rhs.shape().first);
+   	assert(rhs.shape().second == rhs.shape().second);
+
+	auto rslt = rhs;
 	_internal_::cholesky_linear<double, _internal_::MemType::Triangle>
 		(rhs.shape().first, rhs.shape().second, this->_data.lower_data(), rhs.data(), rslt.data());
 	return rslt;
@@ -110,11 +146,25 @@ inline auto DynCholeskyFactorization<T>::factor_mat() const noexcept -> const la
 
 template<typename T>
 template<Vector V>
-inline auto DynCholeskyFactorization<T>::solve_linear(const V& rhs, V& rslt) const -> V& {
+inline auto DynCholeskyFactorization<T>::solve_linear_mut(V& rhs) const -> V& {
    	assert(this->_data.shape().first == rhs.size());
 
 	#if defined LALIB_LAPACK_BACKEND
-	rslt = rhs;
+	_lapack_::potrs(rhs.size(), 1, this->_data.data(), this->_n, rhs.data(), 1);
+	#else
+	_internal_::cholesky_linear<double, _internal_::MemType::Square>
+		(rhs.size(), 1, this->_data.data(), rhs.data(), rhs.data());
+	#endif
+	return rhs;
+}
+
+template<typename T>
+template<Vector V>
+inline auto DynCholeskyFactorization<T>::solve_linear(const V& rhs) const -> V {
+   	assert(this->_data.shape().first == rhs.size());
+
+	auto rslt = rhs;
+	#if defined LALIB_LAPACK_BACKEND
 	_lapack_::potrs(rhs.size(), 1, this->_data.data(), this->_n, rslt.data(), 1);
 	#else
 	_internal_::cholesky_linear<double, _internal_::MemType::Square>
@@ -125,13 +175,29 @@ inline auto DynCholeskyFactorization<T>::solve_linear(const V& rhs, V& rslt) con
 
 template<typename T>
 template<Matrix M>
-inline auto DynCholeskyFactorization<T>::solve_linear(const M& rhs, M& rslt) const -> M& {
+inline auto DynCholeskyFactorization<T>::solve_linear_mut(M& rhs) const -> M& {
    	assert(this->_data.shape().first == rhs.shape().first);
    	assert(rhs.shape().first == rhs.shape().first);
    	assert(rhs.shape().second == rhs.shape().second);
 
 	#if defined LALIB_LAPACK_BACKEND
-	rslt = rhs;
+	_lapack_::potrs(rhs.shape().first, rhs.shape().second, this->_data.data(), this->_n, rhs.data(), rhs.shape().second);
+	#else
+	_internal_::cholesky_linear<double, _internal_::MemType::Square>
+		(rhs.shape().first, rhs.shape().second, this->_data.data(), rhs.data(), rhs.data());
+	#endif
+	return rhs;
+}
+
+template<typename T>
+template<Matrix M>
+inline auto DynCholeskyFactorization<T>::solve_linear(const M& rhs) const -> M {
+   	assert(this->_data.shape().first == rhs.shape().first);
+   	assert(rhs.shape().first == rhs.shape().first);
+   	assert(rhs.shape().second == rhs.shape().second);
+
+	auto rslt = rhs;
+	#if defined LALIB_LAPACK_BACKEND
 	_lapack_::potrs(rhs.shape().first, rhs.shape().second, this->_data.data(), this->_n, rslt.data(), rslt.shape().second);
 	#else
 	_internal_::cholesky_linear<double, _internal_::MemType::Square>

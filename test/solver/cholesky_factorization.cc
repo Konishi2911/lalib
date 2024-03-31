@@ -71,12 +71,12 @@ TEST(CholeskyDecompositionTests, LinearSolverTest) {
 		6.0, 5.0, 14.0
 	}, 3, 3);
 
-	auto b = lalib::DynVecD({ 2.0, 5.0, 1.0 });
-    auto rslt = lalib::DynVecD::filled(3, 0.0);
+	const auto b = lalib::DynVecD({ 2.0, 5.0, 1.0 });
+    auto rslt = b;
 
 	{
 		auto cholesky = lalib::solver::DynTriCholeskyFactorization(std::move(mat));
-		cholesky.solve_linear(b, rslt);
+		cholesky.solve_linear_mut(rslt);
 		
 		EXPECT_DOUBLE_EQ(1.25, rslt[0]);
 		EXPECT_DOUBLE_EQ(1.5, rslt[1]);
@@ -84,7 +84,7 @@ TEST(CholeskyDecompositionTests, LinearSolverTest) {
 	}
 	{
 		auto cholesky = lalib::solver::DynCholeskyFactorization(std::move(mat_sq));
-		cholesky.solve_linear(b, rslt);
+		auto rslt = cholesky.solve_linear(b);
 		
 		EXPECT_DOUBLE_EQ(1.25, rslt[0]);
 		EXPECT_DOUBLE_EQ(1.5, rslt[1]);
@@ -104,16 +104,16 @@ TEST(CholeskyDecompositionTests, MultiLinearSolverTest) {
 		6.0, 5.0, 14.0
 	}, 3, 3);
 
-	auto b = lalib::DynMatD({ 
+	const auto b = lalib::DynMatD({ 
         2.0, 0.0,
         5.0, 2.0, 
         1.0, -1.0
     }, 3, 2);
-    auto rslt = lalib::DynMatD::filled(0.0, 3, 2);
 
 	{
+		auto rslt = b;
 		auto cholesky = lalib::solver::DynTriCholeskyFactorization(std::move(mat));
-		cholesky.solve_linear(b, rslt);
+		cholesky.solve_linear_mut(rslt);
 		
 		EXPECT_DOUBLE_EQ(1.25, rslt(0, 0));
 		EXPECT_DOUBLE_EQ(1.5, rslt(1, 0));
@@ -125,7 +125,7 @@ TEST(CholeskyDecompositionTests, MultiLinearSolverTest) {
 	}
 	{
 		auto cholesky = lalib::solver::DynCholeskyFactorization(std::move(mat_sq));
-		cholesky.solve_linear(b, rslt);
+		auto rslt = cholesky.solve_linear(b);
 		
 		EXPECT_DOUBLE_EQ(1.25, rslt(0, 0));
 		EXPECT_DOUBLE_EQ(1.5, rslt(1, 0));
