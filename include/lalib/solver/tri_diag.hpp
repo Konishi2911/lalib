@@ -55,9 +55,9 @@ inline auto TriDiag<M>::solve_linear(const V &b, V &rslt) noexcept -> V &
 
     #if defined(LALIB_LAPACK_BACKEND)
     rslt = b;
-    __lapack::gtsv(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), 1);
+    _lapack_::gtsv(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), 1);
     #else
-    __internal::tdma(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
+    _internal_::tdma(n, 1, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
     #endif
 
     return rslt;
@@ -75,9 +75,9 @@ inline auto lalib::solver::TriDiag<M>::solve_linear(const M1 & b, M1 & rslt) noe
 
     #if defined(LALIB_LAPACK_BACKEND)
     rslt = b;
-    __lapack::gtsv(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), rslt.shape().second);
+    _lapack_::gtsv(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), rslt.data(), rslt.shape().second);
     #else
-    __internal::tdma(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
+    _internal_::tdma(n, nrow, this->_mat.data_dl(), this->_mat.data_d(), this->_mat.data_du(), b.data(), rslt.data());
     #endif
 
     return rslt;

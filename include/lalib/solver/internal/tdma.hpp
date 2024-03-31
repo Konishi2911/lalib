@@ -5,7 +5,7 @@
 #include <concepts>
 #include <vector>
 
-namespace lalib::solver::__internal {
+namespace lalib::solver::_internal_ {
 
 template<typename T>
 requires ::std::floating_point<T>
