@@ -59,6 +59,30 @@ private:
     lalib::DynMat<T> _data;
 };
 
+
+template<typename T>
+struct DynModCholeskyFactorization {
+	DynModCholeskyFactorization(lalib::DynMat<T>&& mat);
+
+	auto factor_mat() const noexcept -> const lalib::DynMat<T>&;
+
+    template<Vector V>
+    auto solve_linear_mut(V& rslt) const -> V&;
+
+    template<Vector V>
+    auto solve_linear(const V& rhs) const -> V;
+
+    template<Matrix M>
+    auto solve_linear_mut(M& rslt) const -> M&;
+
+    template<Matrix M>
+    auto solve_linear(const M& rhs) const -> M;
+
+private:
+	size_t _n;
+	lalib::DynMat<T> _data;
+};
+
 template<typename T>
 inline DynTriCholeskyFactorization<T>::DynTriCholeskyFactorization(lalib::DynHermiteMat<T>&& mat):
     _n(mat.shape().first),
@@ -206,6 +230,67 @@ inline auto DynCholeskyFactorization<T>::solve_linear(const M& rhs) const -> M {
 	_internal_::cholesky_linear<double, _internal_::MemType::Square>
 		(rhs.shape().first, rhs.shape().second, this->_data.data(), rhs.data(), rslt.data());
 	#endif
+	return rslt;
+}
+
+
+template<typename T>
+inline DynModCholeskyFactorization<T>::DynModCholeskyFactorization(lalib::DynMat<T>&& mat):
+	_n(mat.shape().first),
+	_data(std::move(mat))
+{
+	_internal_::mod_cholesky_decomposition<T, _internal_::MemType::Square>(this->_n, this->_data.data());
+}
+
+template<typename T>
+inline auto DynModCholeskyFactorization<T>::factor_mat() const noexcept -> const lalib::DynMat<T>& {
+	return this->_data;
+}
+
+template<typename T>
+template<lalib::Vector V>
+inline auto DynModCholeskyFactorization<T>::solve_linear_mut(V& rhs) const -> V& {
+   	assert(this->_data.shape().first == rhs.size());
+
+	_internal_::mod_cholesky_linear<T, _internal_::MemType::Square>
+		(this->_n, 1, this->_data.data(), rhs.data(), rhs.data());
+	return rhs;
+}
+
+template<typename T>
+template<lalib::Vector V>
+inline auto DynModCholeskyFactorization<T>::solve_linear(const V& rhs) const -> V {
+   	assert(this->_data.shape().first == rhs.size());
+
+	auto rslt = rhs;
+	_internal_::mod_cholesky_linear<T, _internal_::MemType::Square>
+		(this->_n, 1, this->_data.data(), rhs.data(), rslt.data());
+	return rslt;
+}
+
+
+template<typename T>
+template<lalib::Matrix M>
+inline auto DynModCholeskyFactorization<T>::solve_linear_mut(M& rhs) const -> M& {
+   	assert(this->_data.shape().first == rhs.shape().first);
+   	assert(rhs.shape().first == rhs.shape().first);
+   	assert(rhs.shape().second == rhs.shape().second);
+
+	_internal_::mod_cholesky_linear<T, _internal_::MemType::Square>
+		(this->_n, rhs.shape().second, this->_data.data(), rhs.data(), rhs.data());
+	return rhs;
+}
+
+template<typename T>
+template<lalib::Matrix M>
+inline auto DynModCholeskyFactorization<T>::solve_linear(const M& rhs) const -> M {
+   	assert(this->_data.shape().first == rhs.shape().first);
+   	assert(rhs.shape().first == rhs.shape().first);
+   	assert(rhs.shape().second == rhs.shape().second);
+
+	auto rslt = rhs;
+	_internal_::mod_cholesky_linear<T, _internal_::MemType::Square>
+		(this->_n, rhs.shape().second, this->_data.data(), rhs.data(), rslt.data());
 	return rslt;
 }
 

@@ -71,6 +71,41 @@ auto cholesky_linear(size_t n, size_t nrow, const double* l, const double* rhs, 
 	return rslt; 
 }
 
+template<typename T, MemType MType>
+auto mod_cholesky_decomposition(size_t n, double* l) -> int32_t {
+	for (auto i = 0u; i < n; ++i) {
+		for (auto j = 0u; j <= i; ++j) {
+			for (auto k = 0u; k < j; ++k) { 
+				l[index<MType>(n, i, j)] -= l[index<MType>(n, i, k)] * l[index<MType>(n, j, k)] / l[index<MType>(n, k, k)]; 
+			}
+		}
+		if (l[index<MType>(n, i, i)] == 0) { 
+			throw std::runtime_error("[error] Fail to construct lower triangle matrix. Zero detected at diagonal value."); 
+		} 
+	}
+    return 0;
+}
+
+template<typename T, MemType MType>
+auto mod_cholesky_linear(size_t n, size_t nrhs, const double* l, const double* rhs, double* rslt) {
+	for (auto k = 0u; k < nrhs; ++k) {
+		// Forward process
+		for (auto i = 0u; i < n; ++i) {
+			rslt[i * nrhs + k] = rhs[i * nrhs + k];
+			for (auto j = 0u; j < i; ++j) { 
+				rslt[i * nrhs + k] -= l[index<MType>(n, i, j)] / l[index<MType>(n, j, j)] * rslt[j * nrhs + k]; 
+			} 
+		}
+
+		// Backward process
+		for (int32_t i = n - 1; i >= 0; --i) {
+			for (auto j = i + 1u; j < n; ++j) { 
+				rslt[i * nrhs + k] -= l[index<MType>(n, j, i)] * rslt[j * nrhs + k]; 
+			}
+			rslt[i * nrhs + k] /= l[index<MType>(n, i, i)];
+		}
+	}
+}
 
 }
 #endif
