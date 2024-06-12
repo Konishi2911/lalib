@@ -16,12 +16,21 @@ add_executable(lalib_dyn_mat_test mat/dyn_mat.cc)
 target_link_libraries(lalib_dyn_mat_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(lalib_dyn_mat_test)
 
+add_executable(lalib_com_mat_test mat/common_mat.cc)
+target_link_libraries(lalib_com_mat_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(lalib_com_mat_test)
+
 
 
 ## Vector Operations
 add_executable(lalib_vec_ops_test ops/vec_ops.cc)
 target_link_libraries(lalib_vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(lalib_vec_ops_test)
+
+## Matrix Operations 
+add_executable(lalib_mat_ops_test ops/mat_ops.cc)
+target_link_libraries(lalib_mat_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(lalib_mat_ops_test)
 
 ## Matrix-Vector Operations
 add_executable(lalib_mat_vec_ops_test ops/mat_vec_ops.cc)
