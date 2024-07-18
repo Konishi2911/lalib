@@ -38,10 +38,10 @@ TEST(MatVecOpsTests, SizedMatSizedVecMulTest) {
 TEST(MatVecOpsTests, SizedMatDynVecMulTest) {
     auto alpha = 2.0;
     auto beta = 3.0;
-    auto m = lalib::DynMat<double>({
+    auto m = lalib::DynMat<double>(2, 4, {
         1.0, 2.0, 3.0, 4.0,
         2.0, 4.0, 1.0, 3.0
-    }, 2, 4);
+    });
     auto v = lalib::SizedVec<double, 4>({2.0, 3.0, 4.0, 1.0});
     auto dynv = lalib::DynVec<double>({2.0, 3.0, 4.0, 1.0});
 

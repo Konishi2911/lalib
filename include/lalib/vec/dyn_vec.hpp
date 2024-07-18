@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 #ifndef LALIB_VEC_DYN_VEC_HPP
 #define LALIB_VEC_DYN_VEC_HPP
 

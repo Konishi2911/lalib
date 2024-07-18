@@ -6,11 +6,11 @@
 #if defined LALIB_LAPACK_BACKEND
 #include "lalib/solver/lapack/potr.hpp"
 TEST(CholeskyDecompositionTests, LapackCholeskyDecompositionTest) {
-    auto mat = lalib::DynMat<double>(std::vector{
+    auto mat = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
     auto rslt = lalib::solver::_lapack_::potrf(mat.shape().first, mat.data(), mat.shape().second);
 
     ASSERT_EQ(0, rslt);
@@ -29,11 +29,11 @@ TEST(CholeskyDecompositionTests, CholeskyDecompositionTest) {
 		2.0, 5.0, 
 		6.0, 5.0, 14.0
 	});
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
 	{
 		auto cholesky = lalib::solver::DynTriCholeskyFactorization<double>(std::move(mat));
@@ -65,11 +65,11 @@ TEST(CholeskyDecompositionTests, LinearSolverTest) {
 		2.0, 5.0, 
 		6.0, 5.0, 14.0
 	});
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
 	const auto b = lalib::DynVecD({ 2.0, 5.0, 1.0 });
     auto rslt = b;
@@ -98,17 +98,17 @@ TEST(CholeskyDecompositionTests, MultiLinearSolverTest) {
 		2.0, 5.0, 
 		6.0, 5.0, 14.0
 	});
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
-	const auto b = lalib::DynMatD({ 
+	const auto b = lalib::DynMatD(3, 2, { 
         2.0, 0.0,
         5.0, 2.0, 
         1.0, -1.0
-    }, 3, 2);
+    });
 
 	{
 		auto rslt = b;
@@ -138,11 +138,11 @@ TEST(CholeskyDecompositionTests, MultiLinearSolverTest) {
 }
 
 TEST(ModCholeskyDecompositionTests, DecompositionTest) {
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, std::vector{
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
 	{
 		auto cholesky = lalib::solver::DynModCholeskyFactorization<double>(std::move(mat_sq));
@@ -158,11 +158,11 @@ TEST(ModCholeskyDecompositionTests, DecompositionTest) {
 }
 
 TEST(ModCholeskyDecompositionTests, LinearSolverTest) {
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
 	const auto b = lalib::DynVecD({ 2.0, 5.0, 1.0 });
 	{
@@ -176,17 +176,17 @@ TEST(ModCholeskyDecompositionTests, LinearSolverTest) {
 }
 
 TEST(ModCholeskyDecompositionTests, MultiLinearSolverTest) {
-    auto mat_sq = lalib::DynMat<double>(std::vector{
+    auto mat_sq = lalib::DynMat<double>(3, 3, {
 		4.0, 2.0, 6.0,
 		2.0, 5.0, 5.0,
 		6.0, 5.0, 14.0
-	}, 3, 3);
+	});
 
-	const auto b = lalib::DynMatD({ 
+	const auto b = lalib::DynMatD(3, 2, { 
         2.0, 0.0,
         5.0, 2.0, 
         1.0, -1.0
-    }, 3, 2);
+    });
 
 	{
 		auto cholesky = lalib::solver::DynModCholeskyFactorization(std::move(mat_sq));

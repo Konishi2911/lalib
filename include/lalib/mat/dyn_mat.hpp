@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 #ifndef LALIB_MAT_DYN_MAT_HPP
 #define LALIB_MAT_DYN_MAT_HPP
 
@@ -15,7 +16,12 @@ public:
     // ==== Initializations ==== //
 
     /// @brief Create a sized matrix with given array with copy.
-    constexpr DynMat(const std::vector<T>& arr, size_t n, size_t m) noexcept: 
+    constexpr DynMat(size_t n, size_t m, const std::vector<T>& arr) noexcept: 
+        _elems(arr), _shape(std::make_pair(n, m)) 
+    {}
+
+    /// @brief Create a sized matrix with given array with copy.
+    [[deprecated]] constexpr DynMat(const std::vector<T>& arr, size_t n, size_t m) noexcept: 
         _elems(arr), _shape(std::make_pair(n, m)) 
     {}
 
@@ -89,7 +95,7 @@ private:
 template <typename T>
 inline constexpr auto DynMat<T>::uninit(size_t n, size_t m) noexcept -> DynMat<T>
 {
-    return DynMat<T>(std::vector<T>(n * m), n, m);
+    return DynMat<T>(n, m, std::vector<T>(n * m));
 }
 
 template <typename T>
