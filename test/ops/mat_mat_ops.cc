@@ -62,15 +62,15 @@ TEST(MatMatOpsTests, SizedMatSizedMatMulTest) {
 
 
 TEST(MatMatOpsTests, DynMatDynMatMulTest) {
-    auto m1 = lalib::DynMat<double>({
+    auto m1 = lalib::DynMat<double>(2, 3, {
         1.0, 3.0, 5.0,
         2.0, 4.0, 6.0
-    }, 2, 3);
-    auto m2 = lalib::DynMat<double>({ 
+    });
+    auto m2 = lalib::DynMat<double>(3, 2, { 
         1.0, 2.0,
         2.0, 3.0,
         3.0, 4.0
-    }, 3, 2);
+    });
     auto m3 = lalib::DynMat<double>::filled(1.0, 2, 2);
     auto alpha = 2.0;
     auto beta = 3.0;

@@ -1,11 +1,46 @@
 #include "lalib/mat/sized_mat.hpp"
 #include <gtest/gtest.h>
+#include <stdexcept>
+
+TEST(SizedMatTests, VecConstTest) {
+    using MatD24 = lalib::SizedMat<double, 2, 4>;
+    using MatD23 = lalib::SizedMat<double, 2, 3>;
+    EXPECT_NO_THROW({
+        MatD24(std::vector{
+            1.0, 2.0, 3.0, 4.0,
+            2.0, 1.0, 5.0, 3.0
+        });
+    });
+    EXPECT_THROW({
+        MatD23(std::vector{
+            1.0, 2.0, 3.0, 4.0,
+            2.0, 1.0, 5.0, 3.0
+        });
+    }, std::runtime_error);
+}
+
+TEST(SizedMatTests, InitListConstTest) {
+    using MatD24 = lalib::SizedMat<double, 2, 4>;
+    using MatD23 = lalib::SizedMat<double, 2, 3>;
+    EXPECT_NO_THROW({
+        MatD24 ({
+            1.0, 2.0, 3.0, 4.0,
+            2.0, 1.0, 5.0, 3.0
+        });
+    });
+    EXPECT_THROW({
+        MatD23({
+            1.0, 2.0, 3.0, 4.0,
+            2.0, 1.0, 5.0, 3.0
+        });
+    }, std::runtime_error);
+}
 
 TEST(SizedMatTests, CopyConstTest) {
-    auto mat = lalib::SizedMat<double, 2, 4>({
+    auto mat = lalib::SizedMat<double, 2, 4> {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    });
+    };
 
     auto mat_copy = mat;
 
@@ -20,10 +55,10 @@ TEST(SizedMatTests, CopyConstTest) {
 }
 
 TEST(SizedMatTests, CopyAssignTest) {
-    auto mat = lalib::SizedMat<double, 2, 4>({
+    auto mat = lalib::SizedMat<double, 2, 4> {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    });
+    };
     auto mat_copy = lalib::SizedMat<double, 2, 4>::uninit();
 
     mat_copy = mat;
@@ -39,10 +74,10 @@ TEST(SizedMatTests, CopyAssignTest) {
 }
 
 TEST(SizedMatTests, ShapeTest) {
-    auto mat = lalib::SizedMat<double, 2, 4>({
+    auto mat = lalib::SizedMat<double, 2, 4> {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    });
+    };
 
     ASSERT_EQ(2, mat.shape().first);
     ASSERT_EQ(4, mat.shape().second);

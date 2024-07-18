@@ -2,9 +2,30 @@
 #include <iterator>
 #include <ranges>
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 //static_assert(std::random_access_iterator<typename lalib::SizedVec<uint32_t, 3>::Iter>);
 //static_assert(std::random_access_iterator<typename lalib::SizedVec<uint32_t, 3>::ConstIter>);
+
+TEST(SizedVecTests, VecConstTest) {
+    using VecU3 = lalib::SizedVec<uint32_t, 3>;
+    EXPECT_NO_THROW({
+        VecU3(std::vector<uint32_t>{0, 1, 2});
+    });
+    EXPECT_THROW({
+        VecU3(std::vector<uint32_t>{0, 1, 2, 3});
+    }, std::runtime_error);
+}
+
+TEST(SizedVecTests, InitListConstTest) {
+    using VecU3 = lalib::SizedVec<uint32_t, 3>;
+    EXPECT_NO_THROW({
+        VecU3({0, 1, 2});
+    });
+    EXPECT_THROW({
+        VecU3({0, 1, 2, 3});
+    }, std::runtime_error);
+}
 
 TEST(SizedVecTests, CopyConstTest) {
     auto vec = lalib::SizedVec<uint32_t, 3>({0, 1, 2});

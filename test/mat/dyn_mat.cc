@@ -2,10 +2,10 @@
 #include <gtest/gtest.h>
 
 TEST(DynMatTests, CopyConstTest) {
-    auto mat = lalib::DynMat<double>({
+    auto mat = lalib::DynMat<double>(2, 4, {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    }, 2, 4);
+    });
 
     auto mat_copy = mat;
 
@@ -20,10 +20,10 @@ TEST(DynMatTests, CopyConstTest) {
 }
 
 TEST(DynMatTests, CopyAssignTest) {
-    auto mat = lalib::DynMat<double>({
+    auto mat = lalib::DynMat<double>(2, 4, {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    }, 2, 4);
+    });
     auto mat_copy = lalib::DynMat<double>::uninit(2, 4);
 
     mat_copy = mat;
@@ -39,10 +39,10 @@ TEST(DynMatTests, CopyAssignTest) {
 }
 
 TEST(DynMatTests, ShapeTest) {
-    auto mat = lalib::DynMat<double>({
+    auto mat = lalib::DynMat<double>(2, 4, {
         1.0, 2.0, 3.0, 4.0,
         2.0, 1.0, 5.0, 3.0
-    }, 2, 4);
+    });
 
     ASSERT_EQ(2, mat.shape().first);
     ASSERT_EQ(4, mat.shape().second);

@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 #ifndef LALIB_VEC_DYN_VEC_HPP
 #define LALIB_VEC_DYN_VEC_HPP
 
@@ -23,6 +24,10 @@ public:
     /// @brief Create a sized vector with given array with copy.
     constexpr DynVec(const std::vector<T>& vec) noexcept: 
         _elems(vec) {}
+
+    /// @brief Create a sized vector with given initializer list.
+    constexpr DynVec(std::initializer_list<T> init) noexcept: 
+        _elems(init) {}
 
     /// @brief Create a sized vector with given array with move.
     constexpr DynVec(std::vector<T>&& vec) noexcept: 

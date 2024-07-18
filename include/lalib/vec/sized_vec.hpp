@@ -1,8 +1,11 @@
 #pragma once
+#include <stdexcept>
 #ifndef LALIB_VEC_SIZED_VEC_HPP
 #define LALIB_VEC_SIZED_VEC_HPP
 
 #include <array>
+#include <vector>
+#include <initializer_list>
 #include "lalib/ops/vec_ops_core.hpp"
 
 namespace lalib {
@@ -21,6 +24,12 @@ public:
     /// @brief Create a sized vector with given array with copy.
     constexpr SizedVec(const std::array<T, N>& arr) noexcept: 
         _elems(arr) {}
+
+    /// @brief Create a sized vector with given vector with copy.
+    SizedVec(const std::vector<T>& vec);
+
+    /// @brief Create a sized vector with given initializer list.
+    SizedVec(std::initializer_list<T> init);
 
     /// @brief A copy constructor
     constexpr SizedVec(const SizedVec& vec) noexcept = default;
@@ -83,6 +92,32 @@ constexpr auto generate_std_array_filled_with(T value) -> std::array<T, N> {
         arr.fill(value);
         return arr;
     }();
+}
+
+template<typename T, size_t N>
+inline SizedVec<T, N>::SizedVec(const std::vector<T>& vec):
+    _elems() 
+{
+    if (vec.size() != N) {
+        throw std::runtime_error(
+            "mismatch size of the given vector. " 
+            "expected: " + std::to_string(N) + " vec.size(): " + std::to_string(vec.size())
+        );
+    }
+    std::copy(vec.begin(), vec.end(), this->_elems.begin());
+}
+
+template<typename T, size_t N>
+inline SizedVec<T, N>::SizedVec(std::initializer_list<T> init):
+    _elems()
+{
+    if (init.size() != N) {
+        throw std::runtime_error(
+            "mismatch size of the given initializer list. " 
+            "expected: " + std::to_string(N) + " vec.size(): " + std::to_string(init.size())
+        );
+    }
+    std::copy(init.begin(), init.end(), this->_elems.begin());
 }
 
 template <typename T, size_t N>
