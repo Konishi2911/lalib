@@ -1,8 +1,10 @@
 #pragma once
+#include <initializer_list>
 #ifndef LALIB_MAT_SIZED_MAT_HPP
 #define LALIB_MAT_SIZED_MAT_HPP
 
 #include <array>
+#include <vector>
 #include <utility>
 #include "lalib/ops/ops_traits.hpp"
 #include "lalib/type_traits.hpp"
@@ -23,6 +25,12 @@ public:
     /// @brief Create a sized matrix with given array with copy.
     constexpr SizedMat(const std::array<T, M * N>& arr) noexcept: 
         _elems(arr) {}
+
+    /// @brief Create a sized matrix with given vector with copy.
+    SizedMat(const std::vector<T>& vec);
+
+    /// @brief Create a sized matrix with given initializer list.
+    SizedMat(std::initializer_list<T> init);
 
     /// @brief A copy constructor
     constexpr SizedMat(const SizedMat<T, N, M>& vec) noexcept = default;
@@ -84,6 +92,31 @@ private:
 };
 
 
+template<typename T, size_t N, size_t M>
+inline SizedMat<T, N, M>::SizedMat(std::initializer_list<T> init):
+    _elems()
+{
+    if (init.size() != N * M) {
+        throw std::runtime_error(
+            "mismatch size of the given vector. " 
+            "expected: " + std::to_string(N * M) + " vec.size(): " + std::to_string(init.size())
+        );
+    }
+    std::copy(init.begin(), init.end(), this->_elems.begin());
+}
+
+template<typename T, size_t N, size_t M>
+inline SizedMat<T, N, M>::SizedMat(const std::vector<T>& vec):
+    _elems()
+{
+    if (vec.size() != N * M) {
+        throw std::runtime_error(
+            "mismatch size of the given vector. " 
+            "expected: " + std::to_string(N * M) + " vec.size(): " + std::to_string(vec.size())
+        );
+    }
+    std::copy(vec.begin(), vec.end(), this->_elems.begin());
+}
 
 template <typename T, size_t N, size_t M>
 inline constexpr auto SizedMat<T, N, M>::uninit() noexcept -> SizedMat<T, N, M>

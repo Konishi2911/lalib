@@ -19,6 +19,11 @@ public:
         _elems(arr), _shape(std::make_pair(n, m)) 
     {}
 
+    /// @brief Create a sized matrix with given array with copy.
+    constexpr DynMat(size_t n, size_t m, std::initializer_list<T> init) noexcept: 
+        _elems(init), _shape(std::make_pair(n, m)) 
+    {}
+
     /// @brief A copy constructor
     constexpr DynMat(const DynMat<T>& vec) noexcept = default;
 
