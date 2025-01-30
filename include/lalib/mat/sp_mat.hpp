@@ -190,7 +190,7 @@ struct SpMat {
     
     /// @brief Returns a pointer to the array of the row pointers.
     /// @return     a pointer to the array of the row pointers.
-    auto row_pointers() const noexcept -> const std::vector<size_t>&
+    auto row_ptr() const noexcept -> const std::vector<size_t>&
         { return this->_row_ptr; }
 
     /// @brief Returns a pointer to the array of the column indices.
