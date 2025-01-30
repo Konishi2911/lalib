@@ -74,20 +74,25 @@ struct SpCooMat {
 
 
     // === Accessing === //
-    
+
     /// @brief Returns a pointer to the array of the values.
     /// @return     a pointer to the array of the values.
-    auto values() const noexcept -> const std::vector<T>
+    auto data() noexcept -> T*
+        { return this->_val.data(); }
+    
+    /// @brief Returns a reference to the array of the values.
+    /// @return     a pointer to the array of the values.
+    auto values() const noexcept -> const std::vector<T>&
         { return this->_val; }
 
-    /// @brief Returns a pointer to the array of the row indices.
+    /// @brief Returns a reference to the array of the row indices.
     /// @return     a pointer to the array of the row indices.
-    auto row_indices() const noexcept -> const std::vector<size_t>
+    auto row_indices() const noexcept -> const std::vector<size_t>&
         { return this->_row_ids; }
 
-    /// @brief Returns a pointer to the array of the column indices.
+    /// @brief Returns a reference to the array of the column indices.
     /// @return     a pointer to the array of the column indices.
-    auto col_indices() const noexcept -> const std::vector<size_t>
+    auto col_indices() const noexcept -> const std::vector<size_t>&
         { return this->_col_ids; }
 
 
@@ -175,17 +180,22 @@ struct SpMat {
 
     /// @brief Returns a pointer to the array of the values.
     /// @return     a pointer to the array of the values.
-    auto values() const noexcept -> const std::vector<T>
+    auto data() noexcept -> T*
+        { return this->_val.data(); }
+
+    /// @brief Returns a reference to the array of the values.
+    /// @return     a pointer to the array of the values.
+    auto values() const noexcept -> const std::vector<T>&
         { return this->_val; }
     
     /// @brief Returns a pointer to the array of the row pointers.
     /// @return     a pointer to the array of the row pointers.
-    auto row_pointers() const noexcept -> const std::vector<size_t>
+    auto row_pointers() const noexcept -> const std::vector<size_t>&
         { return this->_row_ptr; }
 
     /// @brief Returns a pointer to the array of the column indices.
     /// @return     a pointer to the array of the column indices.
-    auto col_indices() const noexcept -> const std::vector<size_t>
+    auto col_indices() const noexcept -> const std::vector<size_t>&
         { return this->_col_ids; }
 
 
