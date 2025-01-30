@@ -79,3 +79,27 @@ TEST(MatVecOpsTests, SizedMatSizedVecMulAssignTest) {
     EXPECT_DOUBLE_EQ(8.0, v[0]);
     EXPECT_DOUBLE_EQ(16.0, v[1]);
 }
+
+TEST(MatVecOpsTests, SpMatDynVecMulTest) {
+    auto alpha = 2.0;
+    auto beta = 3.0;
+
+    /*
+    1.0, 2.0, 0.0,
+    0.0, 0.0, 3.0, 
+    4.0, 1.0, 2.0
+    */
+    auto m = lalib::SpMat<double>(
+        {1.0, 2.0, 3.0, 4.0, 1.0, 2.0},
+        {0, 2, 3, 6},
+        {0, 1, 2, 0, 1, 2}
+    );
+    auto v = lalib::DynVec<double>({2.0, 3.0, 4.0});
+
+    auto vr = lalib::DynVec<double>::filled(3, 1.0);
+    lalib::mul(alpha, m, v, beta, vr);
+
+    EXPECT_DOUBLE_EQ(alpha * 8.0 + beta, vr[0]);
+    EXPECT_DOUBLE_EQ(alpha * 12.0 + beta, vr[1]);
+    EXPECT_DOUBLE_EQ(alpha * 19.0 + beta, vr[2]);
+}
