@@ -20,6 +20,9 @@ add_executable(lalib_com_mat_test mat/common_mat.cc)
 target_link_libraries(lalib_com_mat_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(lalib_com_mat_test)
 
+add_executable(lalib_sp_mat_test mat/sp_mat.cc)
+target_link_libraries(lalib_sp_mat_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(lalib_sp_mat_test)
 
 
 ## Vector Operations
