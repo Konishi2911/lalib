@@ -21,6 +21,9 @@ public:
 
     // === Initializations === //
 
+    /// @brief Create an empty dynamic-sized vector.
+    constexpr DynVec() noexcept = default;
+
     /// @brief Create a sized vector with given array with copy.
     constexpr DynVec(const std::vector<T>& vec) noexcept: 
         _elems(vec) {}

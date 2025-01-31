@@ -4,7 +4,9 @@
 #define LALIB_MAT_DYN_MAT_HPP
 
 #include "lalib/ops/ops_traits.hpp"
+#include <ranges>
 #include <vector>
+#include <span>
 
 namespace lalib {
 
@@ -311,6 +313,267 @@ template <typename T>
 inline auto DynTriDiagMat<T>::data_du() noexcept -> T *
 {
     return this->_du.data();
+}
+
+
+/*  ############################  *
+    Dynamic Hessenberg Matrix
+ *  ############################  */
+
+template<typename T>
+struct HessenbergMat {
+    /// @brief Creates a Hessenberg matrix with given elements.
+    HessenbergMat(std::vector<T>&& hess_val);
+
+    /// @brief Creates an empty Hessenberg matrix by allocating memory for the given capacity.
+    static constexpr auto with_capacity(size_t cap) noexcept -> HessenbergMat<T>;
+
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    constexpr auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const noexcept -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+    
+    /// @brief Extend the Hessenberg matrix with zero elements for one dimension.
+    void extend_with_zero() noexcept;;
+
+    /// @brief Extend the Hessenberg matrix with new components for one dimension.
+    /// @exception std::invalid_argument if the size of the new elements is not equal to the size of the matrix.
+    void extend_with(std::vector<T>&& new_elems);
+
+
+    /// @brief Returns a slice of the compoenents in the specified column.
+    auto get_col(size_t j) const noexcept -> std::span<const T>;
+
+
+    /// @brief Returns a pointer to the array of the elements.
+    auto data() noexcept -> T*;
+
+private:
+    size_t _n;
+    std::vector<T> _h;
+    
+    const T _zero = Zero<T>::value();
+
+    static auto _calc_size(size_t n) -> size_t {
+        if (n == 0) { return 0; }
+
+        auto ac = 17 + 8 * n;
+        auto ac_sq = static_cast<size_t>(std::sqrt(ac));
+
+        if (ac != ac_sq * ac_sq) {
+            throw std::invalid_argument("Invalid size for Hessenberg matrix.");
+        }
+
+        auto s = (ac_sq - 3) / 2;
+        return s;
+    }
+};
+
+template<typename T>
+HessenbergMat<T>::HessenbergMat(std::vector<T>&& hess_val):
+    _n(_calc_size(hess_val.size())),
+    _h(std::move(hess_val))
+{}
+
+template<typename T>
+constexpr auto HessenbergMat<T>::with_capacity(size_t cap) noexcept -> HessenbergMat<T> {
+    auto v = std::vector<T>();
+    v.reserve(cap);
+    return HessenbergMat<T>(std::move(v));
+}
+
+template<typename T>
+constexpr auto HessenbergMat<T>::shape() const noexcept -> std::pair<size_t, size_t> {
+    return std::make_pair(this->_n, this->_n);
+}
+
+template<typename T>
+constexpr auto HessenbergMat<T>::operator()(size_t i, size_t j) const noexcept -> const T& {
+    if (i <= j + 1) {
+        auto offset = ((j + 1) * j) / 2 + j;
+        return this->_h[offset + i];
+    } else {
+        return this->_zero;
+    }
+}
+
+template<typename T>
+constexpr auto HessenbergMat<T>::operator()(size_t i, size_t j) -> T& {
+    if (i <= j + 1) {
+        auto offset = ((j + 1) * j) / 2 + j;
+        return this->_h[offset + i];
+    } else {
+        throw std::invalid_argument("Zero component cannot be modified.");
+    }
+}
+
+template<typename T>
+void HessenbergMat<T>::extend_with_zero() noexcept {
+    auto new_elems = this->_n == 0 ? 
+        std::vector<T>(1, Zero<T>::value()) : 
+        std::vector<T>(this->_n + 2, Zero<T>::value());
+    this->_h.insert(this->_h.end(), new_elems.begin(), new_elems.end());
+    this->_n += 1;
+}
+
+template<typename T>
+void HessenbergMat<T>::extend_with(std::vector<T>&& new_elems) {
+    if (new_elems.size() != this->_n + 2) {
+        throw std::invalid_argument("New components must have length n + 2 = " + std::to_string(this->_n + 2));
+    }
+    this->_h.insert(this->_h.end(), new_elems.begin(), new_elems.end());
+    this->_n += 1;
+}
+
+template<typename T>
+auto HessenbergMat<T>::get_col(size_t j) const noexcept -> std::span<const T> {
+    auto offset = ((j + 1) * j) / 2 + j;
+    auto end_offset = std::min(offset + j + 2, this->_h.size());
+    return std::span<const T>(this->_h.data() + offset, end_offset - offset);
+}
+
+template<typename T>
+auto HessenbergMat<T>::data() noexcept -> T* {
+    return this->_h.data();
+}
+
+
+/*  ################################  *
+    Dynamic Upper Triangular Matrix
+ *  ################################  */   
+
+template<typename T>
+struct DynUpperTriMat {
+    /// @brief Default constructor
+    DynUpperTriMat() noexcept = default;
+
+    /// @brief Creates a upper triangular matrix with given elements.
+    DynUpperTriMat(std::vector<T>&& upper_elems) noexcept;
+
+    /// @brief Creates an empty upper triangular matrix by allocating memory for the given capacity.
+    static constexpr auto with_capacity(size_t cap) noexcept -> DynUpperTriMat<T>;
+
+
+    /// @brief Returns the shape of the tri-diagonal matrix
+    constexpr auto shape() const noexcept -> std::pair<size_t, size_t>;
+
+    constexpr auto operator()(size_t i, size_t j) const -> const T&;
+    constexpr auto operator()(size_t i, size_t j) -> T&;
+
+
+    /// @brief Extends the upper triangular matrix with zero elements for one dimension.
+    void extend_with_zero() noexcept;
+
+    /// @brief Extends the upper triangular matrix with new components for one dimension.
+    /// @exception std::invalid_argument if the size of the new elements is not equal to the size of the matrix.
+    void extend_with(std::vector<T>&& new_elems);
+
+
+    /// @brief Perfoms backward substitution to solve the linear system.
+    /// @tparam V    a vector type
+    /// @param y     a rhs vector, and the solution vector after the operation.
+    template<std::ranges::random_access_range V>
+    void back_sub(V&& y) const;
+
+
+    /// @brief Returns a pointer to the array of the upper triangular elements.
+    auto data() noexcept -> T*;
+
+private:
+    size_t _n;
+    std::vector<T> _upper_elems;
+
+    const T _zero = Zero<T>::value();
+
+    static auto _calc_size(size_t n) -> size_t {
+        auto ac = 1 + 8 * n;
+        auto ac_sq = static_cast<size_t>(std::sqrt(ac));
+
+        if (ac != ac_sq * ac_sq) {
+            throw std::invalid_argument("Invalid size for Hessenberg matrix.");
+        }
+
+        auto s = (ac_sq - 1) / 2;
+        return s;
+    }
+};
+
+template<typename T>
+DynUpperTriMat<T>::DynUpperTriMat(std::vector<T>&& upper_elems) noexcept:
+    _n(_calc_size(upper_elems.size())),
+    _upper_elems(std::move(upper_elems))
+{}
+
+template<typename T>
+constexpr auto DynUpperTriMat<T>::with_capacity(size_t cap) noexcept -> DynUpperTriMat<T> {
+    auto v = std::vector<T>();
+    v.reserve(cap);
+    return DynUpperTriMat<T>(std::move(v));
+}
+
+template<typename T>
+constexpr auto DynUpperTriMat<T>::shape() const noexcept -> std::pair<size_t, size_t> {
+    return std::make_pair(this->_n, this->_n);
+}
+
+template<typename T>
+constexpr auto DynUpperTriMat<T>::operator()(size_t i, size_t j) const -> const T& {
+    if (i <= j) {
+        auto offset = ((j + 1) * j) / 2;
+        return this->_upper_elems[offset + i];
+    } else {
+        return this->_zero;
+    }
+}
+
+template<typename T>
+constexpr auto DynUpperTriMat<T>::operator()(size_t i, size_t j) -> T& {
+    if (i <= j) {
+        auto offset = ((j + 1) * j) / 2;
+        return this->_upper_elems[offset + i];
+    } else {
+        throw std::invalid_argument("Zero component cannot be modified.");
+    }
+}
+
+template<typename T>
+void DynUpperTriMat<T>::extend_with_zero() noexcept {
+    auto new_elems = std::vector<T>(this->_n + 1, Zero<T>::value());
+    this->_upper_elems.insert(this->_upper_elems.end(), new_elems.begin(), new_elems.end());
+    this->_n += 1;
+}
+
+template<typename T>
+void DynUpperTriMat<T>::extend_with(std::vector<T>&& new_elems) {
+    if (new_elems.size() != this->_n + 1) {
+        throw std::invalid_argument("New components must have length n + 1 = " + std::to_string(this->_n + 1));
+    }
+    this->_upper_elems.insert(this->_upper_elems.end(), new_elems.begin(), new_elems.end());
+    this->_n += 1;
+}
+
+template<typename T>
+template<std::ranges::random_access_range V>
+void DynUpperTriMat<T>::back_sub(V&& y) const {
+    if (y.size() != this->_n) {
+        throw std::invalid_argument("The size of the vector must be equal to the size of the matrix.");
+    }
+    
+    auto n = this->_n;
+    const auto y_iter = y.begin();
+    for (int64_t i = n - 1; i >= 0; --i) {
+        for (auto j = static_cast<size_t>(i + 1); j < n; ++j) {
+            y_iter[i] -= (*this)(i, j) * y_iter[j];
+        }
+        y_iter[i] /= (*this)(i, i);
+    }
+}
+
+template<typename T>
+auto DynUpperTriMat<T>::data() noexcept -> T* {
+    return this->_upper_elems.data();
 }
 
 

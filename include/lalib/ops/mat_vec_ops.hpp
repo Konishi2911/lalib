@@ -5,6 +5,7 @@
 #include "mat_vec_ops_core.hpp"
 #include "lalib/mat/sized_mat.hpp"
 #include "lalib/mat/dyn_mat.hpp"
+#include "lalib/mat/sp_mat.hpp"
 #include "lalib/vec/sized_vec.hpp"
 #include "lalib/vec/dyn_vec.hpp"
 #include <cassert>
@@ -45,6 +46,15 @@ inline auto mul(T alpha, const DynMat<T>& mat, const DynVec<T>& v, T beta, DynVe
     return vr;
 }
 
+template<typename T>
+inline auto mul(T alpha, const SpMat<T>& mat, const DynVec<T>& v, T beta, DynVec<T>& vr) noexcept -> DynVec<T>& {
+    auto [n, m] = mat.shape();
+    assert(m == v.size());
+    assert(n == vr.size());
+    _sp_mul_core(n, mat.col_indices().data(), mat.row_ptr().data(), alpha, mat.values().data(), v.data(), beta, vr.data());
+    return vr;
+}
+
 
 template<typename T, size_t N, size_t M>
 inline auto operator*(const SizedMat<T, N, M>& mat, const SizedVec<T, M>& vec) noexcept -> SizedVec<T, N> {
@@ -76,6 +86,15 @@ inline auto operator*(const DynMat<T>& mat, const DynVec<T>& vec) noexcept -> Dy
     assert(m == vec.size());
     auto vr = DynVec<T>::uninit(n);
     mul_core(n, m, 1.0, mat.data(), vec.data(), 0.0, vr.data());
+    return vr;
+}
+
+template<typename T>
+inline auto operator*(const SpMat<T>& mat, const DynVec<T>& vec) noexcept -> DynVec<T> {
+    auto [n, m] = mat.shape();
+    assert(m == vec.size());
+    auto vr = DynVec<T>::uninit(n);
+    _sp_mul_core(n, mat.col_indices().data(), mat.row_ptr().data(), 1.0, mat.values().data(), vec.data(), 0.0, vr.data());
     return vr;
 }
 

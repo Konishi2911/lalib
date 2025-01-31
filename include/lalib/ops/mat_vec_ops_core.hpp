@@ -52,6 +52,18 @@ inline auto __mul_core_simd(size_t n, size_t m, T alpha, const T* mat, const T* 
 }
 
 template<typename T>
+inline auto _sp_mul_core(size_t n, const size_t* col_ids, const size_t* row_ptr, T alpha, const T* mat, const T* x, T beta, T* y) noexcept -> T* {
+    #pragma omp simd
+    for (auto i = 0u; i < n; ++i) {
+        y[i] = beta * y[i];
+        for (auto k = row_ptr[i]; k < row_ptr[i + 1]; ++k) {
+            y[i] += alpha * mat[k] * x[col_ids[k]];
+        }
+    }
+    return y;
+}
+
+template<typename T>
 inline auto mul_core(size_t n, size_t m, T alpha, const T* mat, const T* x, T beta, T* y) noexcept -> T* {
     __mul_core_simd(n, m, alpha, mat, x, beta, y);
     return y;
@@ -86,6 +98,12 @@ inline auto mul_core<double>(size_t n, size_t m, double alpha, const double* mat
     #else
     __mul_core_simd(n, m, alpha, mat, x, beta, y);
     #endif
+    return y;
+}
+
+template<typename T>
+inline auto sp_mul_core(size_t n, const size_t* col_ids, const size_t* row_ptr, T alpha, const T* mat, const T* x, T beta, T* y) noexcept -> T* {
+    _sp_mul_core(n, col_ids, row_ptr, alpha, mat, x, beta, y);
     return y;
 }
 
