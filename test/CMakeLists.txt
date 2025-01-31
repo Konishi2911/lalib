@@ -70,6 +70,15 @@ target_link_libraries(lalib_cholesky_decomposition_test PRIVATE
 )
 gtest_discover_tests(lalib_cholesky_decomposition_test)
 
+add_executable(lalib_gmres_test solver/gmres.cc)
+target_link_libraries(lalib_gmres_test PRIVATE 
+    $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
+    $<$<BOOL:${LAPACK_FOUND}>:-llapacke>
+    ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} 
+    GTest::GTest GTest::Main
+)
+gtest_discover_tests(lalib_gmres_test)
+
 
 ## Errors
 add_executable(lalib_error_test err/error.cc)
