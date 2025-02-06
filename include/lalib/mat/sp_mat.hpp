@@ -3,9 +3,12 @@
 
 #include "lalib/ops/ops_traits.hpp"
 #include <algorithm>
+#include <bits/ranges_algo.h>
 #include <vector>
 #include <cassert>
 #include <ranges>
+#include <numeric>
+#include <span>
 
 namespace lalib {
 
@@ -30,6 +33,12 @@ struct SpCooMat {
 
     /// @brief Move constructor
     SpCooMat(SpCooMat<T>&& mat) noexcept = default;
+
+
+    /// @brief Create an unit matrix with given size.
+    /// @param n    the size of the matrix
+    /// @return     a unit matrix with given size.
+    static auto unit(size_t n) -> SpCooMat<T>; 
 
 
     // === Inspecting === //
@@ -96,12 +105,21 @@ struct SpCooMat {
         { return this->_col_ids; }
 
 
+    // === Arithmetic Assignment Operators === //
+
+    /// @brief Add and assign the matrix with another matrix.
+    /// @param mat the matrix to add
+    /// @return a reference of the matrix after modified by the operation.
+    auto operator+=(const SpCooMat<T>& mat) -> SpCooMat<T>&;
+
 private:
     std::vector<T> _val;
     std::vector<size_t> _row_ids;
     std::vector<size_t> _col_ids;
 
     const T _zero = Zero<T>::value();
+
+    void _sort() noexcept;
 };
 
 
@@ -132,6 +150,11 @@ struct SpMat {
 
     /// @brief Move constructor
     SpMat(SpMat<T>&& mat) noexcept = default;
+
+    /// @brief Create an unit matrix with given size.
+    /// @param n    the size of the matrix
+    /// @return     a unit matrix with given size.
+    static auto unit(size_t n) -> SpMat<T>;
 
 
     // === Inspecting === //
@@ -199,12 +222,22 @@ struct SpMat {
         { return this->_col_ids; }
 
 
+    // === Arithmetic Assignment Operators === //
+
+    /// @brief Add and assign the matrix with another matrix.
+    /// @param mat the matrix to add
+    /// @return a reference of the matrix after modified by the operation.
+    auto operator+=(const SpMat<T>& mat) -> SpMat<T>&;
+
+
 private:
     std::vector<T> _val;
     std::vector<size_t> _row_ptr;
     std::vector<size_t> _col_ids;
 
     const T _zero = Zero<T>::value();
+
+    void _sort() noexcept;
 };
 
 
@@ -218,6 +251,7 @@ SpCooMat<T>::SpCooMat(const std::vector<T>& val, const std::vector<size_t>& row_
     if (this->_val.size() != this->_row_ids.size() || this->_val.size() != this->_col_ids.size()) {
         throw std::runtime_error("The size of the vectors must be the same.");
     }
+    this->_sort();
 }
 
 template<typename T>
@@ -227,6 +261,21 @@ SpCooMat<T>::SpCooMat(std::vector<T>&& val, std::vector<size_t>&& row_ids, std::
     if (this->_val.size() != this->_row_ids.size() || this->_val.size() != this->_col_ids.size()) {
         throw std::runtime_error("The size of the vectors must be the same.");
     }
+    this->_sort();
+}
+
+template<typename T>
+auto SpCooMat<T>::unit(size_t n) -> SpCooMat<T> {
+    std::vector<T> val(n, One<T>::value());
+    std::vector<size_t> row_ids(n);
+    std::vector<size_t> col_ids(n);
+
+    for (auto i: std::views::iota(0u, n)) {
+        row_ids[i] = i;
+        col_ids[i] = i;
+    }
+
+    return SpCooMat<T>(val, row_ids, col_ids);
 }
 
 
@@ -269,6 +318,97 @@ constexpr auto SpCooMat<T>::operator=(SpCooMat<T>&& mat) noexcept -> SpCooMat<T>
     this->_col_ids = std::move(mat._col_ids);
 
     return *this;
+}
+
+template<typename T>
+auto SpCooMat<T>::operator+=(const SpCooMat<T>& mat) -> SpCooMat<T>& {
+    if (this->shape() != mat.shape()) {
+        throw std::runtime_error("The shape of the matrices must be the same.");
+    }
+
+    this->_val.reserve(this->_val.size() + mat.nnz());
+    this->_row_ids.reserve(this->_row_ids.size() + mat.nnz());
+    this->_col_ids.reserve(this->_col_ids.size() + mat.nnz());
+
+    auto nrow_ids = this->_row_ids.size();
+    auto nrrow_ids = mat._row_ids.size();
+    auto row_iter = this->_row_ids.begin();
+    auto rrow_iter = mat._row_ids.begin();
+    for (auto i = 0u; i < mat.shape().first; ++i) {
+        auto row_iter_end = std::upper_bound(row_iter, this->_row_ids.begin() + nrow_ids, i, std::less<size_t>{});
+        auto rrow_iter_end = std::upper_bound(rrow_iter, mat._row_ids.begin() + nrrow_ids, i, std::less<size_t>{});
+
+        auto cursor = std::distance(this->_row_ids.begin(), row_iter);
+        auto rcursor = std::distance(mat._row_ids.begin(), rrow_iter);
+        auto cursor_end = std::distance(this->_row_ids.begin(), row_iter_end) - 1;
+        auto rcursor_end = std::distance(mat._row_ids.begin(), rrow_iter_end) - 1;
+
+        while (true) {
+            if (this->_col_ids[cursor] == mat._col_ids[rcursor]) {
+                this->_val[cursor] += mat._val[rcursor];
+
+                if (rcursor == rcursor_end) { break; }
+                else {
+                    if (cursor < cursor_end) { ++cursor; }
+                    if (rcursor < rcursor_end) { ++rcursor; }
+                }
+            }
+            else if (this->_col_ids[cursor] < mat._col_ids[rcursor]) {
+                if (cursor < cursor_end) { ++cursor; }
+                else {
+                    this->_val.emplace_back(mat._val[rcursor]);
+                    this->_row_ids.emplace_back(i);
+                    this->_col_ids.emplace_back(mat._col_ids[rcursor]);
+
+                    if (rcursor == rcursor_end) { break; }
+                    else { ++rcursor; }
+                }
+            }
+            else {
+                this->_val.emplace_back(mat._val[rcursor]);
+                this->_row_ids.emplace_back(i);
+                this->_col_ids.emplace_back(mat._col_ids[rcursor]);
+
+                if (rcursor == rcursor_end) { break; }
+                else { 
+                    if (rcursor < rcursor_end) { ++rcursor; }
+                }
+            }
+        } 
+
+        row_iter = row_iter_end;
+        rrow_iter = rrow_iter_end;
+    }
+
+    this->_sort();
+    return *this;
+}
+
+
+template<typename T>
+void SpCooMat<T>::_sort() noexcept {
+    std::vector<size_t> ids(this->_val.size());
+    std::iota(ids.begin(), ids.end(), 0u);
+
+    std::ranges::sort(ids, [&] (size_t i, size_t j) {
+        if (this->_row_ids[i] == this->_row_ids[j]) {
+            return this->_col_ids[i] < this->_col_ids[j];
+        }
+        return this->_row_ids[i] < this->_row_ids[j];
+    });
+
+    auto new_val = std::vector<T>(this->_val.size());
+    auto new_row_ids = std::vector<size_t>(this->_val.size());
+    auto new_col_ids = std::vector<size_t>(this->_val.size());
+    for (auto i = 0u; i < this->_val.size(); ++i) {
+        new_val[i] = this->_val[ids[i]];
+        new_row_ids[i] = this->_row_ids[ids[i]];
+        new_col_ids[i] = this->_col_ids[ids[i]];
+    }
+
+    this->_val = std::move(new_val);
+    this->_row_ids = std::move(new_row_ids);
+    this->_col_ids = std::move(new_col_ids);
 }
 
 
@@ -324,6 +464,20 @@ SpMat<T>::SpMat(std::vector<T>&& val, std::vector<size_t>&& row_ptr, std::vector
     }
 }
 
+template<typename T>
+auto SpMat<T>::unit(size_t n) -> SpMat<T> {
+    std::vector<T> val(n, One<T>::value());
+    std::vector<size_t> row_ptr(n + 1);
+    std::vector<size_t> col_ids(n);
+
+    for (auto i: std::views::iota(0u, n)) {
+        row_ptr[i] = i;
+        col_ids[i] = i;
+    }
+    row_ptr[n] = n;
+
+    return SpMat<T>(val, row_ptr, col_ids);
+}
 
 
 template<typename T>

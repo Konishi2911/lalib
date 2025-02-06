@@ -223,3 +223,79 @@ TEST(SpMatTests, CooCrsConversionTest) {
     ASSERT_EQ(crs_mat_moved(2, 1), 4.0);
     ASSERT_EQ(crs_mat_moved(2, 2), 5.0);
 }
+
+TEST(SpMatTests, CooUnitMatrixTest) {
+    auto unit_mat = lalib::SpMat<double>::unit(3);
+
+    ASSERT_EQ(unit_mat(0, 0), 1.0);
+    ASSERT_EQ(unit_mat(0, 1), 0.0);
+    ASSERT_EQ(unit_mat(0, 2), 0.0);
+    ASSERT_EQ(unit_mat(1, 0), 0.0);
+    ASSERT_EQ(unit_mat(1, 1), 1.0);
+    ASSERT_EQ(unit_mat(1, 2), 0.0);
+    ASSERT_EQ(unit_mat(2, 0), 0.0);
+    ASSERT_EQ(unit_mat(2, 1), 0.0);
+    ASSERT_EQ(unit_mat(2, 2), 1.0);
+}
+
+TEST(SpMatTests, CrsUnitMatrixTest) {
+    auto unit_mat = lalib::SpMat<double>::unit(3);
+
+    ASSERT_EQ(unit_mat(0, 0), 1.0);
+    ASSERT_EQ(unit_mat(0, 1), 0.0);
+    ASSERT_EQ(unit_mat(0, 2), 0.0);
+    ASSERT_EQ(unit_mat(1, 0), 0.0);
+    ASSERT_EQ(unit_mat(1, 1), 1.0);
+    ASSERT_EQ(unit_mat(1, 2), 0.0);
+    ASSERT_EQ(unit_mat(2, 0), 0.0);
+    ASSERT_EQ(unit_mat(2, 1), 0.0);
+    ASSERT_EQ(unit_mat(2, 2), 1.0);
+}
+
+TEST(SpMatTests, CooMatrixAddAssignTest) {
+    auto mat1 = lalib::SpCooMat<double>::unit(2);
+    auto mat2 = lalib::SpCooMat<double> {
+        { 1.0, 2.0, 3.0, 4.0 },
+        { 0, 0, 1, 1 },
+        { 0, 1, 0, 1 }
+    };
+
+    mat1 += mat2;
+
+    ASSERT_EQ(mat1(0, 0), 2.0);
+    ASSERT_EQ(mat1(0, 1), 2.0);
+    ASSERT_EQ(mat1(1, 0), 3.0);
+    ASSERT_EQ(mat1(1, 1), 5.0);
+
+
+    auto mat3 = lalib::SpCooMat<double>::unit(4);
+    // mat4 = 
+    //  1.0, 2.0, 0.0, 0.0
+    //  3.0, 0.0, 0.0, 0.0
+    //  0.0, 4.0, 0.0, 0.0
+    //  0.0, 0.0, 0.0, 5.0
+    auto mat4 = lalib::SpCooMat<double> {
+        { 1.0, 2.0, 3.0, 4.0, 5.0 },
+        { 0, 0, 1, 2, 3 },
+        { 0, 1, 0 , 1, 3 }
+    };
+
+    mat3 += mat4;
+
+    ASSERT_EQ(mat3(0, 0), 2.0);
+    ASSERT_EQ(mat3(0, 1), 2.0);
+    ASSERT_EQ(mat3(0, 2), 0.0);
+    ASSERT_EQ(mat3(0, 3), 0.0);
+    ASSERT_EQ(mat3(1, 0), 3.0);
+    ASSERT_EQ(mat3(1, 1), 1.0);
+    ASSERT_EQ(mat3(1, 2), 0.0);
+    ASSERT_EQ(mat3(1, 3), 0.0);
+    ASSERT_EQ(mat3(2, 0), 0.0);
+    ASSERT_EQ(mat3(2, 1), 4.0);
+    ASSERT_EQ(mat3(2, 2), 1.0);
+    ASSERT_EQ(mat3(2, 3), 0.0);
+    ASSERT_EQ(mat3(3, 0), 0.0);
+    ASSERT_EQ(mat3(3, 1), 0.0);
+    ASSERT_EQ(mat3(3, 2), 0.0);
+    ASSERT_EQ(mat3(3, 3), 6.0);
+}
