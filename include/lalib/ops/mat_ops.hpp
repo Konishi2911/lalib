@@ -29,6 +29,12 @@ inline auto scale(const T& alpha, DynMat<T>& mat) noexcept -> DynMat<T>& {
 }
 
 template<typename T>
+inline auto scale(const T& alpha, SpCooMat<T>& mat) noexcept -> SpCooMat<T>& {
+    scal_core(alpha, mat.data(), mat.nnz());
+    return mat;
+}
+
+template<typename T>
 inline auto scale(const T& alpha, SpMat<T>& mat) noexcept -> SpMat<T>& {
     scal_core<T>(alpha, mat.data(), mat.nnz());
     return mat;
@@ -44,6 +50,13 @@ inline auto operator*(const T& alpha, const SizedMat<T, N, M>& mat) noexcept -> 
 
 template<typename T>
 inline auto operator*(const T& alpha, const DynMat<T>& mat) noexcept -> DynMat<T> {
+    auto rmat = mat;
+    scale(alpha, rmat);
+    return rmat;
+}
+
+template<typename T>
+inline auto operator*(const T& alpha, const SpCooMat<T>& mat) noexcept -> SpCooMat<T> {
     auto rmat = mat;
     scale(alpha, rmat);
     return rmat;
@@ -72,6 +85,14 @@ inline auto operator-(const SizedMat<T, N, M>& mat) noexcept -> SizedMat<T, N, M
 template<typename T>
 requires std::is_integral_v<T> || std::is_floating_point_v<T>
 inline auto operator-(const DynMat<T>& mat) noexcept -> DynMat<T> {
+    auto rmat = mat;
+    scale(-1.0, rmat);
+    return rmat;
+}
+
+template<typename T>
+requires std::is_integral_v<T> || std::is_floating_point_v<T>
+inline auto operator-(const SpCooMat<T>& mat) noexcept -> SpCooMat<T> {
     auto rmat = mat;
     scale(-1.0, rmat);
     return rmat;
