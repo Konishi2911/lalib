@@ -35,6 +35,11 @@ add_executable(lalib_mat_ops_test ops/mat_ops.cc)
 target_link_libraries(lalib_mat_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
 gtest_discover_tests(lalib_mat_ops_test)
 
+## Sparse Matrix Operations
+add_executable(lalib_sp_mat_ops_test ops/sp_mat_ops.cc)
+target_link_libraries(lalib_sp_mat_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
+gtest_discover_tests(lalib_sp_mat_ops_test)
+
 ## Matrix-Vector Operations
 add_executable(lalib_mat_vec_ops_test ops/mat_vec_ops.cc)
 target_link_libraries(lalib_mat_vec_ops_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
