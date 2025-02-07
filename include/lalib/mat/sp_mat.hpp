@@ -322,10 +322,6 @@ constexpr auto SpCooMat<T>::operator=(SpCooMat<T>&& mat) noexcept -> SpCooMat<T>
 
 template<typename T>
 auto SpCooMat<T>::operator+=(const SpCooMat<T>& mat) -> SpCooMat<T>& {
-    if (this->shape() != mat.shape()) {
-        throw std::runtime_error("The shape of the matrices must be the same.");
-    }
-
     this->_val.reserve(this->_val.size() + mat.nnz());
     this->_row_ids.reserve(this->_row_ids.size() + mat.nnz());
     this->_col_ids.reserve(this->_col_ids.size() + mat.nnz());
