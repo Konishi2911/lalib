@@ -8,6 +8,9 @@
 #include "lalib/ops/mat_vec_ops.hpp"
 #include "lalib/ops/mat_mat_ops.hpp"
 
+#include "lalib/mat/sp_mat.hpp"
+#include "lalib/ops/sp_mat_ops.hpp"
+
 namespace lalib {
 
 template<size_t N, size_t M> using MatF = SizedMat<float, N, M>;
