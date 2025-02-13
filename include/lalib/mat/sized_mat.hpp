@@ -81,6 +81,9 @@ public:
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const noexcept -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) noexcept -> T&;
+
     constexpr auto data() noexcept -> T*;
     constexpr auto data() const noexcept -> const T*;
 
@@ -179,6 +182,19 @@ inline constexpr auto SizedMat<T, N, M>::operator()(size_t i, size_t j) -> T &
     auto& v = this->_elems[i * M + j];
     return v;
 }
+
+template<typename T, size_t N, size_t M>
+inline constexpr auto SizedMat<T, N, M>::at(size_t i, size_t j) const noexcept -> const T&
+{
+    return (*this)(i, j);
+}
+
+template<typename T, size_t N, size_t M>
+inline constexpr auto SizedMat<T, N, M>::mut_at(size_t i, size_t j) noexcept -> T&
+{
+    return (*this)(i, j);
+}
+
 template <typename T, size_t N, size_t M>
 inline constexpr auto SizedMat<T, N, M>::data() noexcept -> T *
 {
@@ -247,6 +263,9 @@ public:
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
+
     /// @brief Returns a pointer to the array of the sub-diagonal elements.
     /// @return 
     auto data_dl() const noexcept -> const T*;
@@ -293,7 +312,19 @@ inline constexpr auto SizedTriDiagMat<T, N>::operator()(size_t i, size_t j) -> T
     if (i == j)             return this->_d[i];
     else if ( i == j - 1 )  return this->_du[i];
     else if ( i == j + 1 )  return this->_dl[i - 1];
-    else                    return Zero<T>::value();
+    else                    throw std::out_of_range("Tri-diagonal matrix is zero outside the tri-diagonal.");
+}
+
+template<typename T, size_t N>
+inline constexpr auto SizedTriDiagMat<T, N>::at(size_t i, size_t j) const -> const T&
+{
+    return (*this)(i, j);
+}
+
+template<typename T, size_t N>
+inline constexpr auto SizedTriDiagMat<T, N>::mut_at(size_t i, size_t j) -> T&
+{
+    return (*this)(i, j);
 }
 
 template <typename T, size_t N>
@@ -345,6 +376,9 @@ struct SizedLowerTriMat {
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
+
     auto lower_data() const noexcept -> const T*;
     auto lower_data() noexcept -> T*;
 
@@ -376,6 +410,16 @@ constexpr auto SizedLowerTriMat<T, N>::operator()(size_t i, size_t j) -> T& {
 }
 
 template<typename T, size_t N>
+constexpr auto SizedLowerTriMat<T, N>::at(size_t i, size_t j) const -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T, size_t N>
+constexpr auto SizedLowerTriMat<T, N>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
+}
+
+template<typename T, size_t N>
 auto SizedLowerTriMat<T, N>::lower_data() const noexcept -> const T* {
     return this->_lower_elems.data();
 }
@@ -403,6 +447,9 @@ struct SizedHermiteMat {
 
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
 
     auto lower_data() const noexcept -> const T*;
     auto lower_data() noexcept -> T*;
@@ -438,6 +485,16 @@ template<typename T, size_t N>
 constexpr auto SizedHermiteMat<T, N>::operator()(size_t i, size_t j) -> T& {
     if (i < j) { std::swap(i, j); }
     return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T, size_t N>
+constexpr auto SizedHermiteMat<T, N>::at(size_t i, size_t j) const -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T, size_t N>
+constexpr auto SizedHermiteMat<T, N>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
 }
 
 template<typename T, size_t N>

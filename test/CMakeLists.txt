@@ -66,6 +66,15 @@ target_link_libraries(lalib_tri_diag_test PRIVATE
 )
 gtest_discover_tests(lalib_tri_diag_test)
 
+add_executable(lalib_ilu_test solver/ilu.cc)
+target_link_libraries(lalib_ilu_test PRIVATE 
+    $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
+    $<$<BOOL:${LAPACK_FOUND}>:-llapacke>
+    ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} 
+    GTest::GTest GTest::Main
+)
+gtest_discover_tests(lalib_ilu_test)
+
 add_executable(lalib_cholesky_decomposition_test solver/cholesky_factorization.cc)
 target_link_libraries(lalib_cholesky_decomposition_test PRIVATE 
     $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
