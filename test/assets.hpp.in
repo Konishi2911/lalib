@@ -1,0 +1,2 @@
+#pragma once
+#define ASSETS_DIR  "${PROJECT_SOURCE_DIR}/test/assets"
