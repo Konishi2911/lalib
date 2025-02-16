@@ -83,6 +83,9 @@ public:
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
+
     constexpr auto data() noexcept -> T*;
     constexpr auto data() const noexcept -> const T*;
 
@@ -157,6 +160,19 @@ inline constexpr auto DynMat<T>::operator()(size_t i, size_t j) -> T &
     return v;
 }
 
+template<typename T>
+inline constexpr auto DynMat<T>::at(size_t i, size_t j) const -> const T&
+{
+    return (*this)(i, j);
+}
+
+template<typename T>
+inline constexpr auto DynMat<T>::mut_at(size_t i, size_t j) -> T&
+{
+    return (*this)(i, j);
+}
+
+
 template <typename T>
 inline constexpr auto DynMat<T>::data() noexcept -> T *
 {
@@ -227,6 +243,9 @@ public:
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
+
     /// @brief Returns a pointer to the array of the sub-diagonal elements.
     /// @return 
     auto data_dl() const noexcept -> const T*;
@@ -279,7 +298,19 @@ inline constexpr auto DynTriDiagMat<T>::operator()(size_t i, size_t j) -> T &
     if (i == j)             return this->_d[i];
     else if ( i == j - 1 )  return this->_du[i];
     else if ( i == j + 1 )  return this->_dl[i - 1];
-    else                    return Zero<T>::value();
+    else                    throw std::invalid_argument("Zero component cannot be modified.");
+}
+
+template <typename T>
+inline constexpr auto DynTriDiagMat<T>::at(size_t i, size_t j) const -> const T &
+{
+    return (*this)(i, j);
+}
+
+template <typename T>
+inline constexpr auto DynTriDiagMat<T>::mut_at(size_t i, size_t j) -> T &
+{
+    return (*this)(i, j);
 }
 
 template <typename T>
@@ -334,6 +365,9 @@ struct HessenbergMat {
 
     constexpr auto operator()(size_t i, size_t j) const noexcept -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    constexpr auto at(size_t i, size_t j) const noexcept -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
     
     /// @brief Extend the Hessenberg matrix with zero elements for one dimension.
     void extend_with_zero() noexcept;;
@@ -410,6 +444,16 @@ constexpr auto HessenbergMat<T>::operator()(size_t i, size_t j) -> T& {
 }
 
 template<typename T>
+constexpr auto HessenbergMat<T>::at(size_t i, size_t j) const noexcept -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+constexpr auto HessenbergMat<T>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
 void HessenbergMat<T>::extend_with_zero() noexcept {
     auto new_elems = this->_n == 0 ? 
         std::vector<T>(1, Zero<T>::value()) : 
@@ -461,6 +505,9 @@ struct DynUpperTriMat {
 
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
 
 
     /// @brief Extends the upper triangular matrix with zero elements for one dimension.
@@ -539,6 +586,16 @@ constexpr auto DynUpperTriMat<T>::operator()(size_t i, size_t j) -> T& {
 }
 
 template<typename T>
+constexpr auto DynUpperTriMat<T>::at(size_t i, size_t j) const -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+constexpr auto DynUpperTriMat<T>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
 void DynUpperTriMat<T>::extend_with_zero() noexcept {
     auto new_elems = std::vector<T>(this->_n + 1, Zero<T>::value());
     this->_upper_elems.insert(this->_upper_elems.end(), new_elems.begin(), new_elems.end());
@@ -591,6 +648,9 @@ struct DynLowerTriMat {
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
 
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
+
     auto lower_data() const noexcept -> const T*;
     auto lower_data() noexcept -> T*;
 
@@ -623,6 +683,16 @@ constexpr auto DynLowerTriMat<T>::operator()(size_t i, size_t j) -> T& {
 }
 
 template<typename T>
+constexpr auto DynLowerTriMat<T>::at(size_t i, size_t j) const -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+constexpr auto DynLowerTriMat<T>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
 auto DynLowerTriMat<T>::lower_data() const noexcept -> const T* {
     return this->_lower_elems.data();
 }
@@ -650,6 +720,9 @@ struct DynHermiteMat {
 
     constexpr auto operator()(size_t i, size_t j) const -> const T&;
     constexpr auto operator()(size_t i, size_t j) -> T&;
+
+    constexpr auto at(size_t i, size_t j) const -> const T&;
+    constexpr auto mut_at(size_t i, size_t j) -> T&;
 
     auto lower_data() const noexcept -> const T*;
     auto lower_data() noexcept -> T*;
@@ -687,6 +760,16 @@ template<typename T>
 constexpr auto DynHermiteMat<T>::operator()(size_t i, size_t j) -> T& {
     if (i < j) { std::swap(i, j); }
     return this->_lower_elems[i * (i + 1) / 2 + j];
+}
+
+template<typename T>
+constexpr auto DynHermiteMat<T>::at(size_t i, size_t j) const -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+constexpr auto DynHermiteMat<T>::mut_at(size_t i, size_t j) -> T& {
+    return (*this)(i, j);
 }
 
 template<typename T>

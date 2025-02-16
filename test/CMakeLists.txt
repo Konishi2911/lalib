@@ -1,3 +1,5 @@
+configure_file(${PROJECT_SOURCE_DIR}/test/assets.hpp.in ${PROJECT_BINARY_DIR}/assets.hpp)
+
 ## Vectors
 add_executable(lalib_sized_vec_test vec/sized_vec.cc)
 target_link_libraries(lalib_sized_vec_test PRIVATE ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} GTest::GTest GTest::Main)
@@ -66,6 +68,15 @@ target_link_libraries(lalib_tri_diag_test PRIVATE
 )
 gtest_discover_tests(lalib_tri_diag_test)
 
+add_executable(lalib_ilu_test solver/ilu.cc)
+target_link_libraries(lalib_ilu_test PRIVATE 
+    $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
+    $<$<BOOL:${LAPACK_FOUND}>:-llapacke>
+    ${BLAS_LIBRARIES} ${OpenMP_CXX_LIBRARIES} 
+    GTest::GTest GTest::Main
+)
+gtest_discover_tests(lalib_ilu_test)
+
 add_executable(lalib_cholesky_decomposition_test solver/cholesky_factorization.cc)
 target_link_libraries(lalib_cholesky_decomposition_test PRIVATE 
     $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
@@ -76,6 +87,7 @@ target_link_libraries(lalib_cholesky_decomposition_test PRIVATE
 gtest_discover_tests(lalib_cholesky_decomposition_test)
 
 add_executable(lalib_gmres_test solver/gmres.cc)
+target_include_directories(lalib_gmres_test PRIVATE ${PROJECT_BINARY_DIR})
 target_link_libraries(lalib_gmres_test PRIVATE 
     $<$<BOOL:${LAPACK_FOUND}>:LAPACK::LAPACK> 
     $<$<BOOL:${LAPACK_FOUND}>:-llapacke>

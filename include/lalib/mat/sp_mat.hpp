@@ -4,6 +4,7 @@
 #include "lalib/ops/ops_traits.hpp"
 #include <algorithm>
 #include <bits/ranges_algo.h>
+#include <cstddef>
 #include <vector>
 #include <cassert>
 #include <ranges>
@@ -56,6 +57,19 @@ struct SpCooMat {
     /// @param j    column index
     /// @return     the value of the element at the given position.
     auto operator()(size_t i, size_t j) const noexcept -> const T&;
+
+    /// @brief Returns the value of the element at the given position.
+    /// @param i    row index
+    /// @param j    column index
+    /// @return     the value of the element at the given position.
+    auto at(size_t i, size_t j) const noexcept -> const T&;
+
+    /// @brief Gets a mutable reference to the element at the given position.
+    /// @param i    row index
+    /// @param j    column index
+    /// @return     a mutable reference to the element at the given position.
+    /// @throw      `std::out_of_range` if the index is out of range or does not point to a non-zero element
+    auto mut_at(size_t i, size_t j) -> T&;
 
 
     // === Modifying === //
@@ -172,6 +186,19 @@ struct SpMat {
     /// @param j    column index
     /// @return     the value of the element at the given position.
     auto operator()(size_t i, size_t j) const noexcept -> const T&;
+
+    /// @brief Returns the value of the element at the given position.
+    /// @param i    row index
+    /// @param j    column index
+    /// @return     the value of the element at the given position.
+    auto at(size_t i, size_t j) const noexcept -> const T&;
+
+    /// @brief Gets a mutable reference to the element at the given position.
+    /// @param i    row index
+    /// @param j    column index
+    /// @return     a mutable reference to the element at the given position.
+    /// @throw      `std::out_of_range` if the index is out of range or does not point to a non-zero element
+    auto mut_at(size_t i, size_t j) -> T&;
 
 
     // === Modifying === //
@@ -303,6 +330,21 @@ auto SpCooMat<T>::operator()(size_t i, size_t j) const noexcept -> const T& {
 }
 
 template<typename T>
+auto SpCooMat<T>::at(size_t i, size_t j) const noexcept -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+auto SpCooMat<T>::mut_at(size_t i, size_t j) -> T& {
+    for (auto cnt: std::views::iota(0u, this->_val.size())) {
+        if (this->_row_ids[cnt] == i && this->_col_ids[cnt] == j) {
+            return this->_val[cnt];
+        }
+    }
+    throw std::out_of_range("Index out of range or does not point to a non-zero element.");
+}
+
+template<typename T>
 constexpr auto SpCooMat<T>::operator=(const SpCooMat<T>& mat) noexcept -> SpCooMat<T>& {
     this->_val = mat._val;
     this->_row_ids = mat._row_ids;
@@ -322,10 +364,6 @@ constexpr auto SpCooMat<T>::operator=(SpCooMat<T>&& mat) noexcept -> SpCooMat<T>
 
 template<typename T>
 auto SpCooMat<T>::operator+=(const SpCooMat<T>& mat) -> SpCooMat<T>& {
-    if (this->shape() != mat.shape()) {
-        throw std::runtime_error("The shape of the matrices must be the same.");
-    }
-
     this->_val.reserve(this->_val.size() + mat.nnz());
     this->_row_ids.reserve(this->_row_ids.size() + mat.nnz());
     this->_col_ids.reserve(this->_col_ids.size() + mat.nnz());
@@ -501,6 +539,21 @@ auto SpMat<T>::operator()(size_t i, size_t j) const noexcept -> const T& {
         }
     }
     return this->_zero;
+}
+
+template<typename T>
+auto SpMat<T>::at(size_t i, size_t j) const noexcept -> const T& {
+    return (*this)(i, j);
+}
+
+template<typename T>
+auto SpMat<T>::mut_at(size_t i, size_t j) -> T& {
+    for (auto cnt: std::views::iota(this->_row_ptr[i], this->_row_ptr[i + 1])) {
+        if (this->_col_ids[cnt] == j) {
+            return this->_val[cnt];
+        }
+    }
+    throw std::out_of_range("Index out of range or does not point to a non-zero element.");
 }
 
 template<typename T>

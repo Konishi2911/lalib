@@ -6,6 +6,7 @@
 #include "lalib/vec/dyn_vec.hpp" 
 #include "lalib/ops/vec_ops.hpp"
 #include "lalib/ops/mat_vec_ops.hpp"
+#include "lalib/solver/ilu.hpp"
 #include <ranges>
 
 namespace lalib::solver {
@@ -18,7 +19,7 @@ struct Gmres {
     /// @brief      Constructs a GMRES solver
     /// @param mat  a matrix
     /// @param tol  a tolerance
-    Gmres(const M& mat, T tol): _mat(mat), _tol(tol) {}
+    Gmres(M&& mat, T tol): _mat(M(mat)), _lu(std::forward<M>(mat)), _tol(tol) {}
 
     /// @brief      Solves a linear system
     /// @param rhs  a right-hand side vector
@@ -27,6 +28,7 @@ struct Gmres {
 
 private:
     const M _mat;
+    const Ilu<T, M> _lu;
     const T _tol;
 
     void _arnoldi(std::vector<DynVec<T>>& q, HessenbergMat<T>& hess, T& h) const;
@@ -45,7 +47,8 @@ auto Gmres<T, M>::solve(const lalib::DynVec<T>& rhs) const -> lalib::DynVec<T> {
     q.reserve(n);
     
     // Initial Krylov subspace basis
-    q.emplace_back((1.0 / rhs.norm2()) * rhs);
+    auto b_prime = this->_lu.solve(rhs);
+    q.emplace_back((1.0 / b_prime.norm2()) * b_prime);
 
     // Givens rotation components
     auto c = std::vector<T>();
@@ -56,7 +59,7 @@ auto Gmres<T, M>::solve(const lalib::DynVec<T>& rhs) const -> lalib::DynVec<T> {
     // Beta vector ( beta = ||b||| U^T e_1 )
     auto beta = std::vector<T>();
     beta.reserve(n);
-    beta.emplace_back(rhs.norm2());
+    beta.emplace_back(b_prime.norm2());
 
     auto r = DynUpperTriMat<T>::with_capacity(n);
     auto hess = HessenbergMat<T>::with_capacity(n);
@@ -78,7 +81,7 @@ auto Gmres<T, M>::solve(const lalib::DynVec<T>& rhs) const -> lalib::DynVec<T> {
 
     // Transform the solution from the Krylov subspace
     auto x = lalib::DynVec<T>::filled(n, Zero<T>::value());
-    for (auto i = 0u; i < n; ++i) {
+    for (auto i = 0u; i < beta.size() - 1; ++i) {
         axpy(1.0, beta[i] * q[i], x);
     }
 
@@ -96,8 +99,8 @@ void Gmres<T, M>::_arnoldi(std::vector<DynVec<T>>& q, HessenbergMat<T>& hess, T&
         hess(i, i - 1) = h;
     }
     assert(hess.shape().first == i + 1);
-
-    auto v = this->_mat * q[i];
+    auto rhs = this->_mat * q[i];
+    auto v = this->_lu.solve(rhs);
     for (auto j: std::views::iota(0u, i + 1)) {
         hess(j, i) = dot(q[j], v);
     }

@@ -1,5 +1,6 @@
 #include "lalib/mat/sp_mat.hpp"
 #include <gtest/gtest.h>
+#include <gtest/gtest_pred_impl.h>
 
 TEST(SpMatTests, SpCooMatCreationTest) {
     using SpCooMatD = lalib::SpCooMat<double>;
@@ -268,16 +269,17 @@ TEST(SpMatTests, CooMatrixAddAssignTest) {
     ASSERT_EQ(mat1(1, 1), 5.0);
 
 
-    auto mat3 = lalib::SpCooMat<double>::unit(4);
+    auto mat3 = lalib::SpCooMat<double>::unit(5);
     // mat4 = 
-    //  1.0, 2.0, 0.0, 0.0
-    //  3.0, 0.0, 0.0, 0.0
-    //  0.0, 4.0, 0.0, 0.0
-    //  0.0, 0.0, 0.0, 5.0
+    //  1.0, 2.0, 0.0, 0.0, 0.0
+    //  3.0, 0.0, 0.0, 0.0, 0.0
+    //  0.0, 4.0, 0.0, 0.0, 0.0
+    //  2.0, 0.0, 0.0, 5.0, 0.0
+    //  6.0, 0.0, 0.0, 0.0, 0.0
     auto mat4 = lalib::SpCooMat<double> {
-        { 1.0, 2.0, 3.0, 4.0, 5.0 },
-        { 0, 0, 1, 2, 3 },
-        { 0, 1, 0 , 1, 3 }
+        { 1.0, 2.0, 3.0, 4.0, 2.0, 5.0, 6.0 },
+        { 0, 0, 1, 2, 3, 3, 4 },
+        { 0, 1, 0 , 1, 0, 3, 0 }
     };
 
     mat3 += mat4;
@@ -294,8 +296,13 @@ TEST(SpMatTests, CooMatrixAddAssignTest) {
     ASSERT_EQ(mat3(2, 1), 4.0);
     ASSERT_EQ(mat3(2, 2), 1.0);
     ASSERT_EQ(mat3(2, 3), 0.0);
-    ASSERT_EQ(mat3(3, 0), 0.0);
+    ASSERT_EQ(mat3(3, 0), 2.0);
     ASSERT_EQ(mat3(3, 1), 0.0);
     ASSERT_EQ(mat3(3, 2), 0.0);
     ASSERT_EQ(mat3(3, 3), 6.0);
+    ASSERT_EQ(mat3(4, 0), 6.0);
+    ASSERT_EQ(mat3(4, 1), 0.0);
+    ASSERT_EQ(mat3(4, 2), 0.0);
+    ASSERT_EQ(mat3(4, 3), 0.0);
+    ASSERT_EQ(mat3(4, 4), 1.0);
 }
