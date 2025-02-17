@@ -381,7 +381,7 @@ auto SpCooMat<T>::operator+=(const SpCooMat<T>& mat) -> SpCooMat<T>& {
         auto cursor_end = std::distance(this->_row_ids.begin(), row_iter_end) - 1;
         auto rcursor_end = std::distance(mat._row_ids.begin(), rrow_iter_end) - 1;
 
-        while (true) {
+        while (rcursor <= rcursor_end) {
             if (this->_col_ids[cursor] == mat._col_ids[rcursor]) {
                 this->_val[cursor] += mat._val[rcursor];
 
